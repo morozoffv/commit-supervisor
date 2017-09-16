@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Commit Supervisor</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="search_button">search</string>
+</resources>
