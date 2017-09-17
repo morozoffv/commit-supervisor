@@ -62,6 +62,7 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponce 
     public void processFinish(JSONArray j) {
         json = j;
         strJson = j.toString();
+        Log.i("DEBUG", strJson);
         Intent intent = new Intent(this, LogActivity.class);
         intent.putExtra("LogActivity", strJson);
         startActivity(intent);

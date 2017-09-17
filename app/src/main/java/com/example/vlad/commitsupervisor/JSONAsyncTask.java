@@ -40,7 +40,7 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
 
         try {
 
-            URL url = new URL("https://api.github.com/users/" + params[0]);
+            URL url = new URL("https://api.github.com/users/" + params[0] + "/events?page=1&per_page=100");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setRequestMethod(REQUEST_METHOD);
@@ -70,14 +70,27 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
             e.printStackTrace();
         }
 
-        JSONArray commits = null;
+        JSONArray jsonArray = null;
         try {
-
-            commits = new JSONArray(json);
+            jsonArray = new JSONArray(json);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return commits;
+
+        JSONArray pushEventArray = new JSONArray();
+        int counter = 0;
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                if (jsonArray.getJSONObject(i).getString("type").equals("PushEvent")) {
+                    pushEventArray.put(counter, jsonArray.getJSONObject(i));
+                    counter++;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return pushEventArray;
     }
 
     @Override
