@@ -28,6 +28,8 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
 
     private AsyncResponce delegate = null;
 
+
+
     public JSONAsyncTask(AsyncResponce delegate) {
         this.delegate = delegate;
     }
@@ -37,57 +39,60 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
 
         String s;
         String json = "";
-
-        try {
-
-            URL url = new URL("https://api.github.com/users/" + params[0] + "/events?page=1&per_page=100");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod(REQUEST_METHOD);
-            connection.setConnectTimeout(CONNECTION_TIMEOUT);
-            connection.setReadTimeout(READ_TIMEOUT);
-
-            connection.connect();
-
-            if (connection.getResponseCode() == 404) {
-                publishProgress();  //work with ui in onProgressUpdate, if user is not found
-                cancel(false);     //TODO: understand what this parameter means
-
-            }
-
-            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-            BufferedReader bufferedReader = new BufferedReader(streamReader);
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((s = bufferedReader.readLine()) != null) {
-                stringBuilder.append(s);
-            }
-            bufferedReader.close();
-            streamReader.close();
-
-            json = stringBuilder.toString();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        JSONArray jsonArray = null;
-        try {
-            jsonArray = new JSONArray(json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         JSONArray pushEventArray = new JSONArray();
-        int counter = 0;
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                if (jsonArray.getJSONObject(i).getString("type").equals("PushEvent")) {
-                    pushEventArray.put(counter, jsonArray.getJSONObject(i));
-                    counter++;
+        for (int i = 0; i < 3; i++) {
+            try {
+             //github api allows to get only 300 events (3 x 100)
+
+                URL url = new URL("https://api.github.com/users/" + params[0] + "/events?page=" + i + "&per_page=100");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod(REQUEST_METHOD);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+                connection.setReadTimeout(READ_TIMEOUT);
+
+                connection.connect();
+
+                if (connection.getResponseCode() == 404) {
+                    publishProgress();  //work with ui in onProgressUpdate, if user is not found
+                    cancel(false);     //TODO: understand what this parameter means
+
                 }
+
+                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(streamReader);
+                StringBuilder stringBuilder = new StringBuilder();
+                while ((s = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(s);
+                }
+                bufferedReader.close();
+                streamReader.close();
+
+                json = stringBuilder.toString();
+
+            } catch(IOException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+            JSONArray jsonArray = null;
+            try {
+                jsonArray = new JSONArray(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            //JSONArray pushEventArray = new JSONArray();
+            //int counter = 0;
+            try {
+                for (int j = 0; j < jsonArray.length(); j++) {
+                    if (jsonArray.getJSONObject(j).getString("type").equals("PushEvent")) {
+                        pushEventArray.put(jsonArray.getJSONObject(j));
+                        //counter++;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         return pushEventArray;
