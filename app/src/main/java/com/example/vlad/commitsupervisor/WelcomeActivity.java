@@ -18,13 +18,12 @@ import org.json.JSONObject;
 
 
 
-
-
 public class WelcomeActivity extends AppCompatActivity implements AsyncResponce {
 
     private JSONArray json;
     private String strJson;
     ProgressBar progressBar;
+    //static private JSONArray events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +59,10 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponce 
 
     @Override
     public void processFinish(JSONArray j) {
-        json = j;
-        strJson = j.toString();
-        Log.i("DEBUG", strJson);
+//        json = j;
+//        strJson = j.toString();
+        LogActivity.setEvents(j); //decided to use static variable, because data is too large for putExtra()
         Intent intent = new Intent(this, LogActivity.class);
-        intent.putExtra("LogActivity", strJson);
         startActivity(intent);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);

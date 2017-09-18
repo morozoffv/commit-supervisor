@@ -29,7 +29,6 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
     private AsyncResponce delegate = null;
 
 
-
     public JSONAsyncTask(AsyncResponce delegate) {
         this.delegate = delegate;
     }
@@ -40,10 +39,9 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
         String s;
         String json = "";
         JSONArray pushEventArray = new JSONArray();
-        for (int i = 0; i < 3; i++) {
+        //TODO: github api has a limit for requests (60 per hour), authentificated users have a limit up to 5k requests per hour. (add auth)
+        for (int i = 0; i < 3; i++) {   //github api allows to get only 300 events (3 x 100)
             try {
-             //github api allows to get only 300 events (3 x 100)
-
                 URL url = new URL("https://api.github.com/users/" + params[0] + "/events?page=" + i + "&per_page=100");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -81,13 +79,10 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
                 e.printStackTrace();
             }
 
-            //JSONArray pushEventArray = new JSONArray();
-            //int counter = 0;
             try {
                 for (int j = 0; j < jsonArray.length(); j++) {
                     if (jsonArray.getJSONObject(j).getString("type").equals("PushEvent")) {
                         pushEventArray.put(jsonArray.getJSONObject(j));
-                        //counter++;
                     }
                 }
             } catch (JSONException e) {

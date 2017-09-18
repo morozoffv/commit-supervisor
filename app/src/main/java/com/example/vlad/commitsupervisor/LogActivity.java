@@ -1,28 +1,51 @@
 package com.example.vlad.commitsupervisor;
 
+import android.app.ListActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-public class LogActivity extends AppCompatActivity {
+import java.util.List;
+
+public class LogActivity extends ListActivity {
 
     String string;
-    JSONArray events = null;
+
+    private static JSONArray events = null;
+    String[] stringArray;
+
+    public static JSONArray getEvents() {
+        return events;
+    }
+
+    public static void setEvents(JSONArray events) {
+        LogActivity.events = events;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log);
-        TextView textView = (TextView) findViewById(R.id.textView);
-        try {
-            events = new JSONArray(getIntent().getStringExtra("LogActivity"));
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+
+        stringArray = new String[events.length()];
+
+        for (int i = 0; i < events.length(); i++) {
+            try {
+                stringArray[i] = events.getJSONObject(i).toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-        textView.setText(getIntent().getStringExtra("LogActivity"));
+
+        ArrayAdapter<String> arrayAdapter;
+
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringArray);
+        setListAdapter(arrayAdapter);
 
     }
 }
