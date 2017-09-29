@@ -3,6 +3,7 @@ package com.example.vlad.commitsupervisor;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,7 +42,7 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponce 
             public void onClick(View v) {
                 String username = searchText.getText().toString();
                 if (username.equals("")) {
-                    Toast.makeText(WelcomeActivity.this, "Please, enter a username", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 progressBar.setVisibility(View.VISIBLE);
@@ -58,10 +59,19 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponce 
     }
 
     @Override
-    public void processFinish(JSONArray j) {
+    public void processFinish(@NonNull SearchResult searchResult) {
 //        json = j;
 //        strJson = j.toString();
-        LogActivity.setEvents(j); //decided to use static variable, because data is too large for putExtra()
+
+
+        if(!searchResult.isSuccessful()) {
+            Toast.makeText(this, "Error: " + searchResult.getResponceCode(), Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            return;
+        }
+
+        Toast.makeText(this, "Success: " + searchResult.getResponceCode(), Toast.LENGTH_SHORT).show();
+        LogActivity.setEvents(searchResult.getEvents()); //decided to use static variable, because data is too large for putExtra()
         Intent intent = new Intent(this, LogActivity.class);
         startActivity(intent);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);

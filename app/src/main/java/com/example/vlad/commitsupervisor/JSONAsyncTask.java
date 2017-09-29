@@ -1,9 +1,6 @@
 package com.example.vlad.commitsupervisor;
 
 import android.os.AsyncTask;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,18 +10,19 @@ import java.net.URL;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 interface AsyncResponce {
-    void processFinish(JSONArray j);
+    void processFinish(SearchResult searchResult);
     void cancelAsyncTask();
 }
 
-public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
+public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
     private static final String REQUEST_METHOD = "GET";
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
+    private static final int responceCode = 200;
+
 
     private AsyncResponce delegate = null;
 
@@ -34,11 +32,12 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
     }
 
     @Override
-    protected JSONArray doInBackground(String... params) {
+    protected SearchResult doInBackground(String... params) {
 
         String s;
         String json = "";
         JSONArray pushEventArray = new JSONArray();
+        SearchResult searchResult = new SearchResult();
         //TODO: github api has a limit for requests (60 per hour), authentificated users have a limit up to 5k requests per hour. (add auth)
         for (int i = 0; i < 3; i++) {   //github api allows to get only 300 events (3 x 100)
             try {
@@ -51,9 +50,11 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
 
                 connection.connect();
 
-                if (connection.getResponseCode() == 404) {
-                    publishProgress();  //work with ui in onProgressUpdate, if user is not found
-                    cancel(false);     //TODO: understand what this parameter means
+                searchResult.setResponceCode(connection.getResponseCode());
+                if (searchResult.getResponceCode() != HttpURLConnection.HTTP_OK) {
+                    //publishProgress();  //work with ui in onProgressUpdate, if user is not found
+                    searchResult.setSuccessful(false);
+                    return searchResult;
 
                 }
 
@@ -70,6 +71,8 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
 
             } catch(IOException e) {
                 e.printStackTrace();
+                searchResult.setSuccessful(false);
+                return searchResult;
             }
 
             JSONArray jsonArray = null;
@@ -77,6 +80,8 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
                 jsonArray = new JSONArray(json);
             } catch (JSONException e) {
                 e.printStackTrace();
+                searchResult.setSuccessful(false);
+                return searchResult;
             }
 
             try {
@@ -87,10 +92,14 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                searchResult.setSuccessful(false);
+                return searchResult;
             }
-        }
 
-        return pushEventArray;
+            searchResult.setEvents(pushEventArray);
+        }
+        searchResult.setSuccessful(true);
+        return searchResult;
     }
 
     @Override
@@ -99,13 +108,12 @@ public class JSONAsyncTask extends AsyncTask <String, Void, JSONArray> {
     }
 
     @Override
-    protected void onPostExecute(JSONArray jsonArray) {
-        delegate.processFinish(jsonArray);
-
+    protected void onPostExecute(SearchResult searchResult) {
+        delegate.processFinish(searchResult);
     }
 
     @Override
     protected void onProgressUpdate(Void... values) {
-        delegate.cancelAsyncTask();
+        //delegate.cancelAsyncTask();
     }
 }
