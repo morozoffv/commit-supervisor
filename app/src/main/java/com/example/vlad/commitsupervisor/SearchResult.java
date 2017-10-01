@@ -5,15 +5,15 @@ import org.json.JSONArray;
 class SearchResult {
 
     private JSONArray events;
-    private int responceCode;
+    private int responseCode;
     private boolean isSuccessful;
 
-    public int getResponceCode() {
-        return responceCode;
+    public int getResponseCode() {
+        return responseCode;
     }
 
-    public void setResponceCode(int responceCode) {
-        this.responceCode = responceCode;
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
     }
 
     public JSONArray getEvents() {

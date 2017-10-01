@@ -11,7 +11,7 @@ import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-interface AsyncResponce {
+interface AsyncResponse {
     void processFinish(SearchResult searchResult);
     void cancelAsyncTask();
 }
@@ -24,10 +24,10 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
     private static final int responceCode = 200;
 
 
-    private AsyncResponce delegate = null;
+    private AsyncResponse delegate = null;
 
 
-    public JSONAsyncTask(AsyncResponce delegate) {
+    public JSONAsyncTask(AsyncResponse delegate) {
         this.delegate = delegate;
     }
 
@@ -41,7 +41,7 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
         //TODO: github api has a limit for requests (60 per hour), authentificated users have a limit up to 5k requests per hour. (add auth)
         for (int i = 0; i < 3; i++) {   //github api allows to get only 300 events (3 x 100)
             try {
-                URL url = new URL("https://api.github.com/users/" + params[0] + "/events?page=" + i + "&per_page=100");
+                URL url = new URL("https://api.github.com/users/" + params[0].trim() + "/events?page=" + i + "&per_page=100");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                 connection.setRequestMethod(REQUEST_METHOD);
@@ -50,8 +50,8 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
                 connection.connect();
 
-                searchResult.setResponceCode(connection.getResponseCode());
-                if (searchResult.getResponceCode() != HttpURLConnection.HTTP_OK) {
+                searchResult.setResponseCode(connection.getResponseCode());
+                if (searchResult.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     //publishProgress();  //work with ui in onProgressUpdate, if user is not found
                     searchResult.setSuccessful(false);
                     return searchResult;

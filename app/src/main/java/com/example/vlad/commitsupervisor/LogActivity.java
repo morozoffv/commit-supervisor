@@ -3,7 +3,9 @@ package com.example.vlad.commitsupervisor;
 import android.app.ListActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ListViewCompat;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -42,10 +44,11 @@ public class LogActivity extends ListActivity {
             }
         }
 
-        ArrayAdapter<String> arrayAdapter;
-
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringArray);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringArray);
         setListAdapter(arrayAdapter);
+        //ListView listView = (ListView) findViewById(R.id.listView);
 
     }
+
+
 }

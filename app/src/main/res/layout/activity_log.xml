@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.vlad.commitsupervisor.LogActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="274dp"
-        android:layout_height="401dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="29dp" />
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="344dp"
+        android:layout_height="495dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp"></ListView>
+
 </android.support.constraint.ConstraintLayout>

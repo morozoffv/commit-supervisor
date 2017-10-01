@@ -2,11 +2,9 @@ package com.example.vlad.commitsupervisor;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -15,11 +13,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 
-
-public class WelcomeActivity extends AppCompatActivity implements AsyncResponce {
+public class WelcomeActivity extends AppCompatActivity implements AsyncResponse {
 
     private JSONArray json;
     private String strJson;
@@ -60,17 +56,14 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponce 
 
     @Override
     public void processFinish(@NonNull SearchResult searchResult) {
-//        json = j;
-//        strJson = j.toString();
-
 
         if(!searchResult.isSuccessful()) {
-            Toast.makeText(this, "Error: " + searchResult.getResponceCode(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
             return;
         }
 
-        Toast.makeText(this, "Success: " + searchResult.getResponceCode(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Success: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
         LogActivity.setEvents(searchResult.getEvents()); //decided to use static variable, because data is too large for putExtra()
         Intent intent = new Intent(this, LogActivity.class);
         startActivity(intent);
