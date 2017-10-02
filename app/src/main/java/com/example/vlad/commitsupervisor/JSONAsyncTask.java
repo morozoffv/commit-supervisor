@@ -13,7 +13,7 @@ import org.json.JSONException;
 
 interface AsyncResponse {
     void processFinish(SearchResult searchResult);
-    void cancelAsyncTask();
+//    void cancelAsyncTask();
 }
 
 public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {

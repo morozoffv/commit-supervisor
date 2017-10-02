@@ -20,6 +20,9 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponse 
     private JSONArray json;
     private String strJson;
     ProgressBar progressBar;
+    Button searchButton;
+    EditText searchText;
+    boolean progressBarState;
     //static private JSONArray events;
 
     @Override
@@ -27,8 +30,8 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponse 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        Button searchButton = (Button) findViewById(R.id.search_button);
-        final EditText searchText = (EditText) findViewById(R.id.searchText);
+        searchButton = (Button) findViewById(R.id.search_button);
+        searchText = (EditText) findViewById(R.id.searchText);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         progressBar.setVisibility(View.GONE);
@@ -41,25 +44,63 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponse 
                     Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                progressBar.setVisibility(View.VISIBLE);
 
                 InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);          //keyboard
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);   //hiding
 
                 new JSONAsyncTask(WelcomeActivity.this).execute(username);
 
+                searchButton.setEnabled(false);
+                searchButton.setText(R.string.searching_button);
+                searchText.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
+
+
 
 
             }
         });
+
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        retrieveElementState();
+
+    }
+
+    private void retrieveElementState() {
+        searchButton = (Button) findViewById(R.id.search_button);
+        searchText = (EditText) findViewById(R.id.searchText);
+        searchButton.setEnabled(true);
+        searchButton.setText(R.string.search_button);
+        searchText.setVisibility(View.VISIBLE);
+        searchText.setText("");
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+
 
     @Override
     public void processFinish(@NonNull SearchResult searchResult) {
 
         if(!searchResult.isSuccessful()) {
             Toast.makeText(this, "Error: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
-            progressBar.setVisibility(View.GONE);
+            retrieveElementState();
             return;
         }
 
@@ -71,9 +112,9 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponse 
         progressBar.setVisibility(View.GONE);
     }
 
-    @Override
-    public void cancelAsyncTask() {     //if user is not found, hide progressbar and send toast
-        progressBar.setVisibility(View.GONE);
-        Toast.makeText(this, "Not found!", Toast.LENGTH_SHORT).show();
-    }
+//    @Override
+//    public void cancelAsyncTask() {     //if user is not found, hide progressbar and send toast
+//        progressBar.setVisibility(View.GONE);
+//        Toast.makeText(this, "Not found!", Toast.LENGTH_SHORT).show();
+//    }
 }
