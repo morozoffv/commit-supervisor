@@ -33,7 +33,6 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
     @Override
     protected SearchResult doInBackground(String... params) {
-
         String s;
         String json = "";
         JSONArray pushEventArray = new JSONArray();
