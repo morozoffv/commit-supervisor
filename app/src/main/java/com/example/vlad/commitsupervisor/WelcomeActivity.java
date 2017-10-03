@@ -33,7 +33,7 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponse 
             isSearching = savedInstanceState.getBoolean("isSearching");
         }
         setContentView(R.layout.activity_welcome);
-
+        CommitSupervisorApp commitSupervisorApp = (CommitSupervisorApp) getApplication();
         initViews();
 
         changeScreenState();
@@ -58,6 +58,10 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponse 
             }
         });
 
+    }
+
+    private CommitSupervisorApp getCommitSupervisorApp() {
+        return (CommitSupervisorApp) getApplication();
     }
 
     private void initViews() {
