@@ -41,20 +41,32 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 //SearchResult searchResult = app.getResult();
                 isSearching = false;
-                changeScreenState(intent.getAction().equals(CommitSupervisorApp.ACTION_SEARCH_COMPLETED));
+//                changeScreenState(intent.getAction().equals(CommitSupervisorApp.ACTION_SEARCH_COMPLETED));
+//
+//                if(intent.getAction().equals(CommitSupervisorApp.ACTION_SEARCH_ERROR)) {
+//                    Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
 
-                if(intent.getAction().equals(CommitSupervisorApp.ACTION_SEARCH_ERROR)) {
-                    Toast.makeText(WelcomeActivity.this, "Error: " /*+ searchResult.getResponseCode()*/, Toast.LENGTH_SHORT).show();
-                    return;
+                switch (intent.getAction()) {
+
+                    case CommitSupervisorApp.ACTION_SEARCH_COMPLETED:
+                        changeScreenState(true);
+                        Toast.makeText(WelcomeActivity.this, "Success, loaded " + intent.getExtras().get("eventsCount") + " events", Toast.LENGTH_SHORT).show();
+                        Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                        startActivity(intentActivity);
+                        break;
+
+                    case CommitSupervisorApp.ACTION_SEARCH_ERROR:
+                        Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                        changeScreenState();
+                        return;
+
+                    default:
+                        return;
                 }
-
-
-                Toast.makeText(WelcomeActivity.this, "Success: " + intent.getExtras(), Toast.LENGTH_SHORT).show();
-                Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
-                startActivity(intentActivity);
             }
         };
-
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CommitSupervisorApp.ACTION_SEARCH_COMPLETED);
