@@ -16,23 +16,15 @@ import java.util.List;
 
 public class LogActivity extends ListActivity {
 
-    String string;
+    private JSONArray events = null;
+    private String[] stringArray;
 
-    private static JSONArray events = null;
-    String[] stringArray;
-
-    public static JSONArray getEvents() {
-        return events;
-    }
-
-    public static void setEvents(JSONArray events) {
-        LogActivity.events = events;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        events = getCommitSupervisorApp().getResult().getEvents();
 
         stringArray = new String[events.length()];
 
@@ -49,6 +41,11 @@ public class LogActivity extends ListActivity {
         //ListView listView = (ListView) findViewById(R.id.listView);
 
     }
+
+    private CommitSupervisorApp getCommitSupervisorApp() {
+        return (CommitSupervisorApp) getApplication();
+    }
+
 
 
 }

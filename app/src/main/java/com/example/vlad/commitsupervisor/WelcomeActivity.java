@@ -1,7 +1,9 @@
 package com.example.vlad.commitsupervisor;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,26 +16,55 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 
+public class WelcomeActivity extends AppCompatActivity {
 
-public class WelcomeActivity extends AppCompatActivity implements AsyncResponse {
+//    private JSONArray json;
+//    private String strJson;
 
-    private JSONArray json;
-    private String strJson;
     private ProgressBar progressBar;
     private Button searchButton;
     private EditText searchText;
-    private boolean isSearching;
+
+    private CommitSupervisorApp app;
+    private BroadcastReceiver broadcastReceiver;
+
+
+    private boolean isSearching; //2 states of a UI: default and searching
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        app = getCommitSupervisorApp();
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //SearchResult searchResult = app.getResult();
+                isSearching = false;
+                changeScreenState(intent.getAction().equals(CommitSupervisorApp.ACTION_SEARCH_COMPLETED));
+
+                if(intent.getAction().equals(CommitSupervisorApp.ACTION_SEARCH_ERROR)) {
+                    Toast.makeText(WelcomeActivity.this, "Error: " /*+ searchResult.getResponseCode()*/, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+                Toast.makeText(WelcomeActivity.this, "Success: " + intent.getExtras(), Toast.LENGTH_SHORT).show();
+                Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                startActivity(intentActivity);
+            }
+        };
+
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CommitSupervisorApp.ACTION_SEARCH_COMPLETED);
+        intentFilter.addAction(CommitSupervisorApp.ACTION_SEARCH_ERROR);
+        registerReceiver(broadcastReceiver, intentFilter);
+
         if (savedInstanceState != null) {
             isSearching = savedInstanceState.getBoolean("isSearching");
         }
         setContentView(R.layout.activity_welcome);
-        CommitSupervisorApp commitSupervisorApp = (CommitSupervisorApp) getApplication();
         initViews();
 
         changeScreenState();
@@ -51,7 +82,7 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponse 
                 InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);          //keyboard
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);   //hiding
 
-                new JSONAsyncTask(WelcomeActivity.this).execute(username.toString());
+                app.search(username);
 
                 changeScreenState();
 
@@ -99,22 +130,29 @@ public class WelcomeActivity extends AppCompatActivity implements AsyncResponse 
         changeScreenState(false);
     }
 
+//    @Override
+//    public void processFinish(@NonNull SearchResult searchResult) {
+//
+//        isSearching = false;
+//        changeScreenState(searchResult.isSuccessful());
+//
+//        if(!searchResult.isSuccessful()) {
+//            Toast.makeText(this, "Error: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//
+//        Toast.makeText(this, "Success: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
+//        LogActivity.setEvents(searchResult.getEvents()); //decided to use static variable, because data is too large for putExtra()
+//        Intent intent = new Intent(this, LogActivity.class);
+//        startActivity(intent);
+//
+//
+//    }
+
     @Override
-    public void processFinish(@NonNull SearchResult searchResult) {
-
-        isSearching = false;
-        changeScreenState(searchResult.isSuccessful());
-
-        if(!searchResult.isSuccessful()) {
-            Toast.makeText(this, "Error: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Toast.makeText(this, "Success: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
-        LogActivity.setEvents(searchResult.getEvents()); //decided to use static variable, because data is too large for putExtra()
-        Intent intent = new Intent(this, LogActivity.class);
-        startActivity(intent);
-
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
-
 }

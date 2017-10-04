@@ -31,4 +31,6 @@ class SearchResult {
     public void setSuccessful(boolean successful) {
         isSuccessful = successful;
     }
+
+    public int getEventsCount() { return events.length(); }
 }

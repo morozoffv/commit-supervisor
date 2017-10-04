@@ -11,10 +11,6 @@ import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-interface AsyncResponse {
-    void processFinish(SearchResult searchResult);
-//    void cancelAsyncTask();
-}
 
 public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
@@ -23,13 +19,6 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
     private static final int CONNECTION_TIMEOUT = 15000;
     private static final int responceCode = 200;
 
-
-    private AsyncResponse delegate = null;
-
-
-    public JSONAsyncTask(AsyncResponse delegate) {
-        this.delegate = delegate;
-    }
 
     @Override
     protected SearchResult doInBackground(String... params) {
@@ -106,10 +95,9 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
         super.onPreExecute();
     }
 
-    @Override
-    protected void onPostExecute(SearchResult searchResult) {
-        delegate.processFinish(searchResult);
-    }
+//    @Override
+//    protected void onPostExecute(SearchResult searchResult) {
+//    }
 
     @Override
     protected void onProgressUpdate(Void... values) {
