@@ -1,14 +1,10 @@
 package com.example.vlad.commitsupervisor;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -26,52 +22,32 @@ public class WelcomeActivity extends AppCompatActivity {
     private Button searchButton;
     private EditText searchText;
 
-    private CommitSupervisorApp app;
-    private BroadcastReceiver broadcastReceiver;
-
-
     private boolean isSearching; //2 states of a UI: default and searching
+
+    private CommitSupervisorApp app;
+    final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
+        @Override
+        public void onCompleted(Bundle bundle) {
+            isSearching = false;
+            changeScreenState(true);
+            Toast.makeText(WelcomeActivity.this, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show();
+            Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+            startActivity(intentActivity);
+        }
+
+        @Override
+        public void onError() {
+            isSearching = false;
+            Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+            changeScreenState();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = getCommitSupervisorApp();
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //SearchResult searchResult = app.getResult();
-                isSearching = false;
-//                changeScreenState(intent.getAction().equals(CommitSupervisorApp.ACTION_SEARCH_COMPLETED));
-//
-//                if(intent.getAction().equals(CommitSupervisorApp.ACTION_SEARCH_ERROR)) {
-//                    Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
 
-                switch (intent.getAction()) {
-
-                    case CommitSupervisorApp.ACTION_SEARCH_COMPLETED:
-                        changeScreenState(true);
-                        Toast.makeText(WelcomeActivity.this, "Success, loaded " + intent.getExtras().get("eventsCount") + " events", Toast.LENGTH_SHORT).show();
-                        Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
-                        startActivity(intentActivity);
-                        break;
-
-                    case CommitSupervisorApp.ACTION_SEARCH_ERROR:
-                        Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-                        changeScreenState();
-                        return;
-
-                    default:
-                        return;
-                }
-            }
-        };
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(CommitSupervisorApp.ACTION_SEARCH_COMPLETED);
-        intentFilter.addAction(CommitSupervisorApp.ACTION_SEARCH_ERROR);
-        registerReceiver(broadcastReceiver, intentFilter);
+        searchBroadcastReceiver.onRegister(this);
 
         if (savedInstanceState != null) {
             isSearching = savedInstanceState.getBoolean("isSearching");
@@ -80,19 +56,37 @@ public class WelcomeActivity extends AppCompatActivity {
         initViews();
 
         changeScreenState();
+    }
+
+    private CommitSupervisorApp getCommitSupervisorApp() {
+        return (CommitSupervisorApp) getApplication();
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    private boolean isUserInputValid(CharSequence username) {
+        return TextUtils.isEmpty(username);
+    }
+
+    private void initViews() {
+        searchButton = (Button) findViewById(R.id.search_button);
+        searchText = (EditText) findViewById(R.id.searchText);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isSearching = true;
                 final CharSequence username = searchText.getText();
-                if (TextUtils.isEmpty(username)) {
+                if (isUserInputValid(username)) {
                     Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);          //keyboard
-                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);   //hiding
+                hideKeyboard();
 
                 app.search(username);
 
@@ -100,24 +94,12 @@ public class WelcomeActivity extends AppCompatActivity {
 
             }
         });
-
-    }
-
-    private CommitSupervisorApp getCommitSupervisorApp() {
-        return (CommitSupervisorApp) getApplication();
-    }
-
-    private void initViews() {
-        searchButton = (Button) findViewById(R.id.search_button);
-        searchText = (EditText) findViewById(R.id.searchText);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean("isSearching", isSearching);
         super.onSaveInstanceState(savedInstanceState);
-        
     }
 
     @Override
@@ -165,6 +147,6 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
+        searchBroadcastReceiver.onUnregister(this);
     }
 }
