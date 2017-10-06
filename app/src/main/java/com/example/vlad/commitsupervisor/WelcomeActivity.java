@@ -24,7 +24,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private boolean isSearching; //2 states of a UI: default and searching
 
-    private CommitSupervisorApp app;
     final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
         @Override
         public void onCompleted(Bundle bundle) {
@@ -87,9 +86,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
 
                 hideKeyboard();
-
-                app.search(username);
-
+                getCommitSupervisorApp().search(username);
                 changeScreenState();
 
             }
@@ -123,26 +120,6 @@ public class WelcomeActivity extends AppCompatActivity {
     private void changeScreenState() {
         changeScreenState(false);
     }
-
-//    @Override
-//    public void processFinish(@NonNull SearchResult searchResult) {
-//
-//        isSearching = false;
-//        changeScreenState(searchResult.isSuccessful());
-//
-//        if(!searchResult.isSuccessful()) {
-//            Toast.makeText(this, "Error: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//
-//        Toast.makeText(this, "Success: " + searchResult.getResponseCode(), Toast.LENGTH_SHORT).show();
-//        LogActivity.setEvents(searchResult.getEvents()); //decided to use static variable, because data is too large for putExtra()
-//        Intent intent = new Intent(this, LogActivity.class);
-//        startActivity(intent);
-//
-//
-//    }
 
     @Override
     protected void onDestroy() {
