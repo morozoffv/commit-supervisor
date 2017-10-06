@@ -20,7 +20,7 @@ import java.util.List;
 
 public class LogActivity extends AppCompatActivity {
 
-    private JSONArray events = null;
+    private JSONArray events;
     private String[] stringArray;
 
     private RecyclerView recyclerView;
@@ -34,15 +34,8 @@ public class LogActivity extends AppCompatActivity {
 
         events = getCommitSupervisorApp().getResult().getEvents();
 
-        stringArray = new String[events.length()];
+        stringArray = JSONArrayToStringArray(events);
 
-        for (int i = 0; i < events.length(); i++) {
-            try {
-                stringArray[i] = events.getJSONObject(i).toString();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
         setContentView(R.layout.activity_log);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -67,6 +60,21 @@ public class LogActivity extends AppCompatActivity {
 
     private CommitSupervisorApp getCommitSupervisorApp() {
         return (CommitSupervisorApp) getApplication();
+    }
+
+    //should i pass to this activity just a string array and make cast to string array from jsonarray in other place?
+    private String[] JSONArrayToStringArray(JSONArray jsonArray) {  //how to change var name in one single method?
+        String[] stringArray = new String[jsonArray.length()];
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                stringArray[i] = jsonArray.getJSONObject(i).toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return stringArray;
     }
 
 
