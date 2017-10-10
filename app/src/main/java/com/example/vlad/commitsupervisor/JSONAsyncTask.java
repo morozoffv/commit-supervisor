@@ -22,10 +22,13 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
     @Override
     protected SearchResult doInBackground(String... params) {
+
         String s;
         String json = "";
         JSONArray pushEventArray = new JSONArray();
         SearchResult searchResult = new SearchResult();
+
+
         //TODO: github api has a limit for requests (60 per hour), authentificated users have a limit up to 5k requests per hour. (add auth)
         for (int i = 0; i < 3; i++) {   //github api allows to get only 300 events (3 x 100)
             try {
@@ -40,10 +43,8 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
                 searchResult.setResponseCode(connection.getResponseCode());
                 if (searchResult.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    //publishProgress();  //work with ui in onProgressUpdate, if user is not found
                     searchResult.setSuccessful(false);
                     return searchResult;
-
                 }
 
                 InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
@@ -63,7 +64,7 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
                 return searchResult;
             }
 
-            JSONArray jsonArray = null;
+            JSONArray jsonArray;
             try {
                 jsonArray = new JSONArray(json);
             } catch (JSONException e) {
@@ -87,6 +88,9 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
             searchResult.setEvents(pushEventArray);
         }
         searchResult.setSuccessful(true);
+
+        
+
         return searchResult;
     }
 

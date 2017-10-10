@@ -8,6 +8,16 @@ class SearchResult {
     private int responseCode;
     private boolean isSuccessful;
 
+//    private String username;
+//    private String repoName;
+//    private String avatarUrl;
+//    private String eventTime;
+//    private String branch;
+//    private String message;
+//    private String profileUrl;
+
+
+
     public int getResponseCode() {
         return responseCode;
     }
@@ -33,4 +43,9 @@ class SearchResult {
     }
 
     public int getEventsCount() { return events.length(); }
+
+
+
+
+
 }
