@@ -33,8 +33,9 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
         String s;
         String json = null;
         JSONArray rawJson = new JSONArray();
-        JSONArray pushEventArray = new JSONArray();
+        //JSONArray pushEventArray = new JSONArray();
         ArrayList<Commit> commitsList = new ArrayList<>();
+        ArrayList<PushEvent> pushEventsList = new ArrayList<>();
         SearchResult searchResult = new SearchResult();
 
         ArrayList<String> reposName = new ArrayList<>();    //TODO: different class with reposName and pushed_date for data filtration
@@ -84,14 +85,26 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
             }
 
             try {
+                //should i begin from 1? (not from 0)
                 for (int j = 0; j < rawJson.length(); j++) {
-//                    if (jsonArray.getJSONObject(j).getString("type").equals("PushEvent")) {
-//                        pushEventArray.put(jsonArray.getJSONObject(j));
-//                    }
                     //TODO: comment events
                     switch (rawJson.getJSONObject(j).getString("type")) {
                         case "PushEvent":
-                            pushEventArray.put(rawJson.getJSONObject(j));
+                            //pushEventArray.put(rawJson.getJSONObject(j));
+                            PushEvent pushEvent = new PushEvent();
+
+                            JSONObject rawPushEvent = rawJson.getJSONObject(j);
+                            JSONObject repo = rawPushEvent.getJSONObject("repo");
+                            pushEvent.setRepoName(repo.getString("name"));
+
+                            JSONObject payload = rawPushEvent.getJSONObject("payload");
+                            pushEvent.setBranch(payload.getString("ref"));
+
+                            JSONArray commits = payload.getJSONArray("commits");
+                            pushEvent.setCommitNumber(commits.length());
+
+                            pushEvent.setCreationTime(rawPushEvent.getString("created_at"));
+                            pushEventsList.add(pushEvent);
                             break;
                         case "CommitCommentEvent":
                             break;
@@ -107,9 +120,9 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
                 return searchResult;
             }
 
-            searchResult.setEvents(pushEventArray);
-
         }
+
+        searchResult.setPushEventsList(pushEventsList);
 
         searchResult.setSuccessful(true);
 
@@ -154,14 +167,11 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
             return searchResult;
         }
 
-
-
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);  //if date will change during processing, can it cause the problems?
+        Date date = new Date();
 
         for (String repname: reposName) {
             try {
-
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
-                Date date = new Date();
 
                 URL url = new URL("https://api.github.com/repos/" + params[0].trim() + "/" + repname + "/commits?since=" + dateFormat.format(date) + "00:00:00Z");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();

@@ -3,8 +3,9 @@ package com.example.vlad.commitsupervisor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -13,7 +14,7 @@ import android.widget.TextView;
 
 public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
 
-    private String[] stringArray;
+    private ArrayList<PushEvent> pushEventsList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -24,8 +25,8 @@ public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
         }
     }
 
-    public JSONAdapter(String[] dataSet) {
-        stringArray = dataSet;
+    public JSONAdapter(ArrayList<PushEvent> dataSet) {
+        pushEventsList = dataSet;
     }
 
     @Override
@@ -37,12 +38,12 @@ public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) { //if RecyclerView freezes during scrolling, that is because this method works slow
-        holder.textView.setText(stringArray[position].substring(0, 200));
+        holder.textView.setText(pushEventsList.get(position).getRepoName()/*.substring(0, 200)*/);
     }
 
     @Override
     public int getItemCount() {
-        return stringArray.length;
+        return pushEventsList.size();
     }
 
 

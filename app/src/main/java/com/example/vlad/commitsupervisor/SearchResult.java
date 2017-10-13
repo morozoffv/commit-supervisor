@@ -1,18 +1,17 @@
 package com.example.vlad.commitsupervisor;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 
 class SearchResult {
 
-    private JSONArray events;
+    //private JSONArray events;
     private int responseCode;
     private boolean isSuccessful;
 
-    private RepositoryAuthor repositoryAuthor;
+    private User user;
 
     private ArrayList<Commit> commitsList = new ArrayList<>();
+    private ArrayList<PushEvent> pushEventsList = new ArrayList<>();
 
 //    private String username;
 //    private String repoName;
@@ -32,13 +31,13 @@ class SearchResult {
         this.responseCode = responseCode;
     }
 
-    public JSONArray getEvents() {
-        return events;
-    }
-
-    public void setEvents(JSONArray events) {
-        this.events = events;
-    }
+//    public JSONArray getEvents() {
+//        return events;
+//    }
+//
+//    public void setEvents(JSONArray events) {
+//        this.events = events;
+//    }
 
     public boolean isSuccessful() {
         return isSuccessful;
@@ -48,15 +47,15 @@ class SearchResult {
         isSuccessful = successful;
     }
 
-    public int getEventsCount() { return events.length(); }
+//    public int getEventsCount() { return events.length(); }
 
 
-    public RepositoryAuthor getRepositoryAuthor() {
-        return repositoryAuthor;
+    public User getUser() {
+        return user;
     }
 
-    public void setRepositoryAuthor(RepositoryAuthor repositoryAuthor) {
-        this.repositoryAuthor = repositoryAuthor;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public ArrayList<Commit> getCommitsList() {
@@ -67,5 +66,11 @@ class SearchResult {
         this.commitsList = commitsList;
     }
 
+    public ArrayList<PushEvent> getPushEventsList() {
+        return pushEventsList;
+    }
 
+    public void setPushEventsList(ArrayList<PushEvent> pushEventsList) {
+        this.pushEventsList = pushEventsList;
+    }
 }

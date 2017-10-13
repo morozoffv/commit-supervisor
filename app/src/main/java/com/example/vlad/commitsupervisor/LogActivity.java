@@ -16,11 +16,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LogActivity extends AppCompatActivity {
 
-    private JSONArray events;
+    private ArrayList<PushEvent> events;
     private String[] stringArray;
 
     private RecyclerView recyclerView;
@@ -32,9 +33,10 @@ public class LogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        events = getCommitSupervisorApp().getResult().getEvents();
+        events = getCommitSupervisorApp().getResult().getPushEventsList();
 
-        stringArray = JSONArrayToStringArray(events);
+        //stringArray = events.toString();
+
 
         setContentView(R.layout.activity_log);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -47,7 +49,7 @@ public class LogActivity extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayout.VERTICAL); //need getOrientation()
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        adapter = new JSONAdapter(stringArray);
+        adapter = new JSONAdapter(events);
         recyclerView.setAdapter(adapter);
 
 
@@ -62,20 +64,20 @@ public class LogActivity extends AppCompatActivity {
         return (CommitSupervisorApp) getApplication();
     }
 
-    //should i pass to this activity just a string array and make cast to string array from jsonarray in other place?
-    private String[] JSONArrayToStringArray(JSONArray jsonArray) {  //how to change var name in one single method?
-        String[] stringArray = new String[jsonArray.length()];
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                stringArray[i] = jsonArray.getJSONObject(i).toString();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return stringArray;
-    }
+//    //should i pass to this activity just a string array and make cast to string array from jsonarray in other place?
+//    private String[] JSONArrayToStringArray(JSONArray jsonArray) {  //how to change var name in one single method?
+//        String[] stringArray = new String[jsonArray.length()];
+//
+//        for (int i = 0; i < jsonArray.length(); i++) {
+//            try {
+//                stringArray[i] = jsonArray.getJSONObject(i).toString();
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return stringArray;
+//    }
 
 
 

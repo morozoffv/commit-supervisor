@@ -4,7 +4,7 @@ package com.example.vlad.commitsupervisor;
  * Created by vlad on 11/10/2017.
  */
 
-public class RepositoryAuthor {
+public class User {
 
     private String username;
     private String avatarUrl;
