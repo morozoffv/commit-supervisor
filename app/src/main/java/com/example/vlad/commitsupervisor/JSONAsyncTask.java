@@ -7,9 +7,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
@@ -24,9 +31,13 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
     protected SearchResult doInBackground(String... params) {
 
         String s;
-        String json = "";
+        String json = null;
+        JSONArray rawJson = new JSONArray();
         JSONArray pushEventArray = new JSONArray();
+        ArrayList<Commit> commitsList = new ArrayList<>();
         SearchResult searchResult = new SearchResult();
+
+        ArrayList<String> reposName = new ArrayList<>();    //TODO: different class with reposName and pushed_date for data filtration
 
 
         //TODO: github api has a limit for requests (60 per hour), authentificated users have a limit up to 5k requests per hour. (add auth)
@@ -64,9 +75,8 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
                 return searchResult;
             }
 
-            JSONArray jsonArray;
             try {
-                jsonArray = new JSONArray(json);
+                rawJson = new JSONArray(json);
             } catch (JSONException e) {
                 e.printStackTrace();
                 searchResult.setSuccessful(false);
@@ -74,9 +84,21 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
             }
 
             try {
-                for (int j = 0; j < jsonArray.length(); j++) {
-                    if (jsonArray.getJSONObject(j).getString("type").equals("PushEvent")) {
-                        pushEventArray.put(jsonArray.getJSONObject(j));
+                for (int j = 0; j < rawJson.length(); j++) {
+//                    if (jsonArray.getJSONObject(j).getString("type").equals("PushEvent")) {
+//                        pushEventArray.put(jsonArray.getJSONObject(j));
+//                    }
+                    //TODO: comment events
+                    switch (rawJson.getJSONObject(j).getString("type")) {
+                        case "PushEvent":
+                            pushEventArray.put(rawJson.getJSONObject(j));
+                            break;
+                        case "CommitCommentEvent":
+                            break;
+                        case "IssueCommentEvent":
+                            break;
+                        case "PullRequestReviewCommentEvent":
+                            break;
                     }
                 }
             } catch (JSONException e) {
@@ -86,10 +108,125 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
             }
 
             searchResult.setEvents(pushEventArray);
+
         }
+
         searchResult.setSuccessful(true);
 
-        
+        try {
+            URL url = new URL("https://api.github.com/users/" + params[0].trim() + "/repos");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod(REQUEST_METHOD);
+            connection.setConnectTimeout(CONNECTION_TIMEOUT);
+            connection.setReadTimeout(READ_TIMEOUT);
+
+            connection.connect();
+
+            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+            BufferedReader bufferedReader = new BufferedReader(streamReader);
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((s = bufferedReader.readLine()) != null) {
+                stringBuilder.append(s);
+            }
+            bufferedReader.close();
+            streamReader.close();
+
+            json = stringBuilder.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            rawJson = new JSONArray(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for (int i = 0; i < rawJson.length(); i++) {
+                reposName.add(rawJson.getJSONObject(i).getString("name"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            searchResult.setSuccessful(false);
+            return searchResult;
+        }
+
+
+
+
+        for (String repname: reposName) {
+            try {
+
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
+                Date date = new Date();
+
+                URL url = new URL("https://api.github.com/repos/" + params[0].trim() + "/" + repname + "/commits?since=" + dateFormat.format(date) + "00:00:00Z");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod(REQUEST_METHOD);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+                connection.setReadTimeout(READ_TIMEOUT);
+
+                connection.connect();
+
+                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(streamReader);
+                StringBuilder stringBuilder = new StringBuilder();
+                while ((s = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(s);
+                }
+                bufferedReader.close();
+                streamReader.close();
+
+                json = stringBuilder.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                rawJson = new JSONArray(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+
+                for (int i = 0; i < rawJson.length(); i++) {
+
+                    Commit commit = new Commit();
+
+
+
+                    JSONObject commitJson = new JSONObject(rawJson.getJSONObject(i).getString("commit"));
+
+                    JSONObject committer = commitJson.getJSONObject("committer");
+                    commit.setCommitterName(committer.getString("name"));
+                    commit.setCommitDate(committer.getString("date"));
+
+                    commit.setMessage(commitJson.getString("message"));
+
+                    commit.setCommitUrl(rawJson.getJSONObject(i).getString("html_url"));
+
+                    commit.setRepoName(repname);
+
+                    commitsList.add(commit);
+
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                searchResult.setSuccessful(false);
+                return searchResult;
+            }
+            searchResult.setCommitsList(commitsList);
+
+
+        }
+
 
         return searchResult;
     }
