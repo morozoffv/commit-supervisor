@@ -12,6 +12,9 @@ class SearchResult {
 
     private ArrayList<Commit> commitsList = new ArrayList<>();
     private ArrayList<PushEvent> pushEventsList = new ArrayList<>();
+    private ArrayList<IssueCommentEvent> issueCommentEventsList = new ArrayList<>();
+    private ArrayList<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList = new ArrayList<>();  //beautiful name
+    private ArrayList<CommitCommentEvent> commitCommentEventsList = new ArrayList<>();
 
 //    private String username;
 //    private String repoName;
@@ -72,5 +75,29 @@ class SearchResult {
 
     public void setPushEventsList(ArrayList<PushEvent> pushEventsList) {
         this.pushEventsList = pushEventsList;
+    }
+
+    public ArrayList<IssueCommentEvent> getIssueCommentEventsList() {
+        return issueCommentEventsList;
+    }
+
+    public void setIssueCommentEventsList(ArrayList<IssueCommentEvent> issueCommentEventsList) {
+        this.issueCommentEventsList = issueCommentEventsList;
+    }
+
+    public ArrayList<PullRequestReviewCommentEvent> getPullRequestReviewCommentEventsList() {
+        return pullRequestReviewCommentEventsList;
+    }
+
+    public void setPullRequestReviewCommentEventsList(ArrayList<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList) {
+        this.pullRequestReviewCommentEventsList = pullRequestReviewCommentEventsList;
+    }
+
+    public ArrayList<CommitCommentEvent> getCommitCommentEventsList() {
+        return commitCommentEventsList;
+    }
+
+    public void setCommitCommentEventsList(ArrayList<CommitCommentEvent> commitCommentEventsList) {
+        this.commitCommentEventsList = commitCommentEventsList;
     }
 }
