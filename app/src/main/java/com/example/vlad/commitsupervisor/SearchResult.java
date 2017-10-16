@@ -5,7 +5,7 @@ import java.util.ArrayList;
 class SearchResult {
 
     //private JSONArray events;
-    private int responseCode;
+//    private int responseCode;
     private boolean isSuccessful;
 
     private User user;
@@ -26,13 +26,13 @@ class SearchResult {
 
 
 
-    public int getResponseCode() {
-        return responseCode;
-    }
-
-    public void setResponseCode(int responseCode) {
-        this.responseCode = responseCode;
-    }
+//    public int getResponseCode() {
+//        return responseCode;
+//    }
+//
+//    public void setResponseCode(int responseCode) {
+//        this.responseCode = responseCode;
+//    }
 
 //    public JSONArray getEvents() {
 //        return events;
