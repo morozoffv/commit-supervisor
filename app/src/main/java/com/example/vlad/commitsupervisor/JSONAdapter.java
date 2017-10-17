@@ -5,7 +5,9 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.example.vlad.commitsupervisor.events.PushEvent;
+
+import java.util.List;
 
 
 /**
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 
 public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
 
-    private ArrayList<PushEvent> pushEventsList;
+    private List<PushEvent> pushEventsList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -25,7 +27,7 @@ public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
         }
     }
 
-    public JSONAdapter(ArrayList<PushEvent> dataSet) {
+    public JSONAdapter(List<PushEvent> dataSet) {
         pushEventsList = dataSet;
     }
 

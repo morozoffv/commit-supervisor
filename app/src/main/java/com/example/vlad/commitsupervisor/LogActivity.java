@@ -1,27 +1,20 @@
 package com.example.vlad.commitsupervisor;
 
-import android.app.ListActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.ListViewCompat;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.vlad.commitsupervisor.events.PushEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LogActivity extends AppCompatActivity {
 
-    private ArrayList<PushEvent> events;
+    private List<PushEvent> events;
     private String[] stringArray;
 
     private RecyclerView recyclerView;

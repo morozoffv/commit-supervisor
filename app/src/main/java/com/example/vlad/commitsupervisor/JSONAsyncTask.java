@@ -2,6 +2,15 @@ package com.example.vlad.commitsupervisor;
 
 import android.os.AsyncTask;
 
+import com.example.vlad.commitsupervisor.events.CommitCommentEvent;
+import com.example.vlad.commitsupervisor.events.IssueCommentEvent;
+import com.example.vlad.commitsupervisor.events.PullRequestReviewCommentEvent;
+import com.example.vlad.commitsupervisor.events.PushEvent;
+import com.example.vlad.commitsupervisor.parsers.CommitCommentParser;
+import com.example.vlad.commitsupervisor.parsers.IssueCommentEventParser;
+import com.example.vlad.commitsupervisor.parsers.PullRequestReviewCommentParser;
+import com.example.vlad.commitsupervisor.parsers.PushEventParser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -24,11 +34,11 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
 
-    private ArrayList<Commit> commitsList = new ArrayList<>();
-    private ArrayList<PushEvent> pushEventsList = new ArrayList<>();
-    private ArrayList<IssueCommentEvent> issueCommentEventsList = new ArrayList<>();
-    private ArrayList<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList = new ArrayList<>();  //beautiful name
-    private ArrayList<CommitCommentEvent> commitCommentEventsList = new ArrayList<>();
+    private List<Commit> commitsList = new ArrayList<>();
+    private List<PushEvent> pushEventsList = new ArrayList<>();
+    private List<IssueCommentEvent> issueCommentEventsList = new ArrayList<>();
+    private List<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList = new ArrayList<>();  //beautiful name
+    private List<CommitCommentEvent> commitCommentEventsList = new ArrayList<>();
     private User user = new User();
 
     private SearchResult searchResult = new SearchResult();
@@ -188,31 +198,32 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
     private void setEvents(JSONObject rawEvent) throws JSONException {
         switch (rawEvent.getString("type")) {
             case "PushEvent":
-                PushEvent pushEvent = new PushEvent();
-                pushEvent.setEventData(rawEvent);
-                pushEventsList.add(pushEvent);
-
-                //pushEventsList.add(new PushEvent().setEventData(rawEvent));
-
+                final PushEvent pushEvent = PushEventParser.parse(rawEvent);
+                if (pushEvent != null) {
+                    pushEventsList.add(pushEvent);
+                }
                 break;
             case "CommitCommentEvent":
-                CommitCommentEvent commitCommentEvent = new CommitCommentEvent();
-                commitCommentEvent.setEventData(rawEvent);
-                commitCommentEventsList.add(commitCommentEvent);
+                CommitCommentEvent commitCommentEvent = CommitCommentParser.parse(rawEvent);
+                if (commitCommentEvent != null) {
+                    commitCommentEventsList.add(commitCommentEvent);
+                }
                 break;
             case "IssueCommentEvent":
-                IssueCommentEvent issueCommentEvent = new IssueCommentEvent();
-                issueCommentEvent.setEventData(rawEvent);
-                issueCommentEventsList.add(issueCommentEvent);
+                IssueCommentEvent issueCommentEvent = IssueCommentEventParser.parse(rawEvent);
+                if (issueCommentEvent != null) {
+                    issueCommentEventsList.add(issueCommentEvent);
+                }
                 break;
             case "PullRequestReviewCommentEvent":
-                PullRequestReviewCommentEvent pullRequestReviewCommentEvent = new PullRequestReviewCommentEvent();
-                pullRequestReviewCommentEvent.setEventData(rawEvent);
-                pullRequestReviewCommentEventsList.add(pullRequestReviewCommentEvent);
+                PullRequestReviewCommentEvent pullRequestReviewCommentEvent = PullRequestReviewCommentParser.parse(rawEvent);
+                if (pullRequestReviewCommentEvent != null) {
+                    pullRequestReviewCommentEventsList.add(pullRequestReviewCommentEvent);
+                }
                 break;
         }
 
-        searchResult.setPushEventsList(pushEventsList);
+        searchResult.setPushEventsList(pushEventsList);  //into searchResult
         searchResult.setCommitCommentEventsList(commitCommentEventsList);
         searchResult.setIssueCommentEventsList(issueCommentEventsList);
         searchResult.setPullRequestReviewCommentEventsList(pullRequestReviewCommentEventsList);

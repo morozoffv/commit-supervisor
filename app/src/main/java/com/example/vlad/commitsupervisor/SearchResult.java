@@ -1,6 +1,12 @@
 package com.example.vlad.commitsupervisor;
 
+import com.example.vlad.commitsupervisor.events.CommitCommentEvent;
+import com.example.vlad.commitsupervisor.events.IssueCommentEvent;
+import com.example.vlad.commitsupervisor.events.PullRequestReviewCommentEvent;
+import com.example.vlad.commitsupervisor.events.PushEvent;
+
 import java.util.ArrayList;
+import java.util.List;
 
 class SearchResult {
 
@@ -10,11 +16,11 @@ class SearchResult {
 
     private User user;
 
-    private ArrayList<Commit> commitsList = new ArrayList<>();
-    private ArrayList<PushEvent> pushEventsList = new ArrayList<>();
-    private ArrayList<IssueCommentEvent> issueCommentEventsList = new ArrayList<>();
-    private ArrayList<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList = new ArrayList<>();  //beautiful name
-    private ArrayList<CommitCommentEvent> commitCommentEventsList = new ArrayList<>();
+    private List<Commit> commitsList = new ArrayList<>();
+    private List<PushEvent> pushEventsList = new ArrayList<>();
+    private List<IssueCommentEvent> issueCommentEventsList = new ArrayList<>();
+    private List<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList = new ArrayList<>();  //beautiful name
+    private List<CommitCommentEvent> commitCommentEventsList = new ArrayList<>();
 
 //    private String username;
 //    private String repoName;
@@ -61,43 +67,43 @@ class SearchResult {
         this.user = user;
     }
 
-    public ArrayList<Commit> getCommitsList() {
+    public List<Commit> getCommitsList() {
         return commitsList;
     }
 
-    public void setCommitsList(ArrayList<Commit> commitsList) {
+    public void setCommitsList(List<Commit> commitsList) {
         this.commitsList = commitsList;
     }
 
-    public ArrayList<PushEvent> getPushEventsList() {
+    public List<PushEvent> getPushEventsList() {
         return pushEventsList;
     }
 
-    public void setPushEventsList(ArrayList<PushEvent> pushEventsList) {
+    public void setPushEventsList(List<PushEvent> pushEventsList) {
         this.pushEventsList = pushEventsList;
     }
 
-    public ArrayList<IssueCommentEvent> getIssueCommentEventsList() {
+    public List<IssueCommentEvent> getIssueCommentEventsList() {
         return issueCommentEventsList;
     }
 
-    public void setIssueCommentEventsList(ArrayList<IssueCommentEvent> issueCommentEventsList) {
+    public void setIssueCommentEventsList(List<IssueCommentEvent> issueCommentEventsList) {
         this.issueCommentEventsList = issueCommentEventsList;
     }
 
-    public ArrayList<PullRequestReviewCommentEvent> getPullRequestReviewCommentEventsList() {
+    public List<PullRequestReviewCommentEvent> getPullRequestReviewCommentEventsList() {
         return pullRequestReviewCommentEventsList;
     }
 
-    public void setPullRequestReviewCommentEventsList(ArrayList<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList) {
+    public void setPullRequestReviewCommentEventsList(List<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList) {
         this.pullRequestReviewCommentEventsList = pullRequestReviewCommentEventsList;
     }
 
-    public ArrayList<CommitCommentEvent> getCommitCommentEventsList() {
+    public List<CommitCommentEvent> getCommitCommentEventsList() {
         return commitCommentEventsList;
     }
 
-    public void setCommitCommentEventsList(ArrayList<CommitCommentEvent> commitCommentEventsList) {
+    public void setCommitCommentEventsList(List<CommitCommentEvent> commitCommentEventsList) {
         this.commitCommentEventsList = commitCommentEventsList;
     }
 }
