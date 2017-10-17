@@ -65,7 +65,13 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
                 for (int j = 0; j < rawJson.length(); j++) {
                     setEvents(rawJson.getJSONObject(j)); //JSONObject rawEvent
                 }
-            } catch (JSONException e) { //all exceptions in one catch block?
+
+                searchResult.setPushEventsList(pushEventsList);  //into searchResult
+                searchResult.setCommitCommentEventsList(commitCommentEventsList);
+                searchResult.setIssueCommentEventsList(issueCommentEventsList);
+                searchResult.setPullRequestReviewCommentEventsList(pullRequestReviewCommentEventsList);
+
+            } catch (JSONException e) {
                 e.printStackTrace();
                 searchResult.setSuccessful(false);
                 return searchResult;
@@ -179,7 +185,7 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
         connection.connect();
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new BadConnectionException("Bad connection, response code: " + connection.getResponseCode());
+            throw new BadConnectionException("Bad connection, response code: " + connection.getResponseCode()); //
         }
 
         String s;
@@ -222,11 +228,6 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
                 }
                 break;
         }
-
-        searchResult.setPushEventsList(pushEventsList);  //into searchResult
-        searchResult.setCommitCommentEventsList(commitCommentEventsList);
-        searchResult.setIssueCommentEventsList(issueCommentEventsList);
-        searchResult.setPullRequestReviewCommentEventsList(pullRequestReviewCommentEventsList);
     }
 
     private void setCommits(JSONArray rawJson, String repname) throws JSONException { //remove repname
