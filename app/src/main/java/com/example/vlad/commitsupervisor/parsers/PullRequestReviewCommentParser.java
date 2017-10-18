@@ -13,7 +13,7 @@ public class PullRequestReviewCommentParser {
 
     public static CommentEvent parse(final JSONObject rawEvent) {
         try {
-            CommentEvent pullRequestReviewCommentEvent = new CommentEvent(Event.PULL_REQUEST_COMMENT);
+            CommentEvent pullRequestReviewCommentEvent = new CommentEvent(EventTypes.PullRequestReviewCommentEvent);
 
             final JSONObject repo = rawEvent.getJSONObject("repo");
             pullRequestReviewCommentEvent.setRepoName(repo.getString("name"));

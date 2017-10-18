@@ -17,20 +17,24 @@ public class EventParser {
     public static Event parse(JSONObject rawEvent)  {
 
         try {
-            switch (rawEvent.getString("type")) {
-                case "PushEvent":
+            switch (EventTypes.valueOf(rawEvent.getString("type"))) {
+                case PushEvent:
                     return PushEventParser.parse(rawEvent);
-                case "CommitCommentEvent":
+                case CommitCommentEvent:
                     return CommitCommentParser.parse(rawEvent);
-                case "IssueCommentEvent":
+                case IssueCommentEvent:
                     return IssueCommentEventParser.parse(rawEvent);
-                case "PullRequestReviewCommentEvent":
+                case PullRequestReviewCommentEvent:
                     return PullRequestReviewCommentParser.parse(rawEvent);
             }
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
+        } catch (IllegalArgumentException e) { //TODO: redo
+            e.printStackTrace();
+            return null;
         }
+
 
         return null;
     }

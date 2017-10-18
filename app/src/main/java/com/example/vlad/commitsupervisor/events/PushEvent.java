@@ -1,5 +1,7 @@
 package com.example.vlad.commitsupervisor.events;
 
+import com.example.vlad.commitsupervisor.parsers.EventTypes;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +16,7 @@ public class PushEvent extends Event {
     private String branch;
 
     public PushEvent() {
-        super(Event.PUSH_EVENT);
+        super(EventTypes.PushEvent);
     }
 
     public int getCommitNumber() {

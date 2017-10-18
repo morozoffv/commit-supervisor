@@ -18,7 +18,7 @@ public class IssueCommentEventParser {
     @Nullable
     public static CommentEvent parse(final JSONObject rawEvent) {
         try {
-            final CommentEvent issueCommentEvent = new CommentEvent(Event.ISSUE_COMMENT);
+            final CommentEvent issueCommentEvent = new CommentEvent(EventTypes.IssueCommentEvent);
 
             final JSONObject repo = rawEvent.getJSONObject("repo");
             issueCommentEvent.setRepoName(repo.getString("name"));

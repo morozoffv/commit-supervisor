@@ -40,7 +40,7 @@ public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) { //if RecyclerView freezes during scrolling, that is because this method works slow
-        holder.textView.setText(eventsList.get(position).getType()/*.substring(0, 200)*/);
+        holder.textView.setText(eventsList.get(position).getType().toString()/*.substring(0, 200)*/);
     }
 
     @Override

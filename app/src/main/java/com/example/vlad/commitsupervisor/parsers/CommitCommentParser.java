@@ -17,7 +17,7 @@ public class CommitCommentParser {
     @Nullable
     public static CommentEvent parse(final JSONObject rawEvent) {
         try {
-            final CommentEvent commitCommentEvent = new CommentEvent(Event.COMMIT_COMMENT);
+            final CommentEvent commitCommentEvent = new CommentEvent(EventTypes.CommitCommentEvent);
 
             final JSONObject repo = rawEvent.getJSONObject("repo");
             commitCommentEvent.setRepoName(repo.getString("name"));

@@ -1,5 +1,7 @@
 package com.example.vlad.commitsupervisor.events;
 
+import com.example.vlad.commitsupervisor.parsers.EventTypes;
+
 /**
  * Created by vlad on 17/10/2017.
  */
@@ -10,7 +12,7 @@ public class CommentEvent extends Event {
     private String commentUrl;
     private String comment;
 
-    public CommentEvent(String type) {
+    public CommentEvent(EventTypes type) {
         super(type);
     }
 
