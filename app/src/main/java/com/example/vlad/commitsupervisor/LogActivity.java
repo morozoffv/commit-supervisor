@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.LinearLayout;
 
+import com.example.vlad.commitsupervisor.events.Event;
 import com.example.vlad.commitsupervisor.events.PushEvent;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class LogActivity extends AppCompatActivity {
 
-    private List<PushEvent> events;
+    private List<Event> events;
     private String[] stringArray;
 
     private RecyclerView recyclerView;
@@ -26,7 +27,7 @@ public class LogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        events = getCommitSupervisorApp().getResult().getPushEventsList();
+        events = getCommitSupervisorApp().getResult().getEvents();
 
         //stringArray = events.toString();
 

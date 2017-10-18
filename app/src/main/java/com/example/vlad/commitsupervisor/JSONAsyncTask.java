@@ -3,10 +3,12 @@ package com.example.vlad.commitsupervisor;
 import android.os.AsyncTask;
 
 import com.example.vlad.commitsupervisor.events.CommitCommentEvent;
+import com.example.vlad.commitsupervisor.events.Event;
 import com.example.vlad.commitsupervisor.events.IssueCommentEvent;
 import com.example.vlad.commitsupervisor.events.PullRequestReviewCommentEvent;
 import com.example.vlad.commitsupervisor.events.PushEvent;
 import com.example.vlad.commitsupervisor.parsers.CommitCommentParser;
+import com.example.vlad.commitsupervisor.parsers.EventParser;
 import com.example.vlad.commitsupervisor.parsers.IssueCommentEventParser;
 import com.example.vlad.commitsupervisor.parsers.PullRequestReviewCommentParser;
 import com.example.vlad.commitsupervisor.parsers.PushEventParser;
@@ -35,10 +37,10 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
     private static final int CONNECTION_TIMEOUT = 15000;
 
     private List<Commit> commitsList = new ArrayList<>();
-    private List<PushEvent> pushEventsList = new ArrayList<>();
-    private List<IssueCommentEvent> issueCommentEventsList = new ArrayList<>();
-    private List<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList = new ArrayList<>();  //beautiful name
-    private List<CommitCommentEvent> commitCommentEventsList = new ArrayList<>();
+//    private List<PushEvent> pushEventsList = new ArrayList<>();
+//    private List<IssueCommentEvent> issueCommentEventsList = new ArrayList<>();
+//    private List<PullRequestReviewCommentEvent> pullRequestReviewCommentEventsList = new ArrayList<>();  //beautiful name
+//    private List<CommitCommentEvent> commitCommentEventsList = new ArrayList<>();
     private User user = new User();
 
     private SearchResult searchResult = new SearchResult();
@@ -47,15 +49,9 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
     @Override
     protected SearchResult doInBackground(String... params) {
 
-        String s;
-        String json = null;
-        JSONArray rawJson = new JSONArray();
-        //JSONArray pushEventArray = new JSONArray();
-
-
+        JSONArray rawJson;
 
         ArrayList<String> reposName = new ArrayList<>();    //TODO: create different class with reposName and pushed_date for data filtration
-
 
         //TODO: github api has a limit for requests (60 per hour), authentificated users have a limit up to 5k requests per hour. (add auth)
         for (int i = 0; i < 3; i++) {   //github api allows to get only 300 events (3 x 100)
@@ -63,13 +59,17 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
                 URL url = new URL("https://api.github.com/users/" + params[0].trim() + "/events?page=" + i + "&per_page=100");
                 rawJson = new JSONArray(getJSONStringFromURL(url));
                 for (int j = 0; j < rawJson.length(); j++) {
-                    setEvents(rawJson.getJSONObject(j)); //JSONObject rawEvent
-                }
+//                    setEvents(rawJson.getJSONObject(j)); //JSONObject rawEvent
+                    final Event event = EventParser.parse(rawJson.getJSONObject(j));
+                    if (event != null) {
+                        searchResult.addToEvents(event);
+                    }
 
-                searchResult.setPushEventsList(pushEventsList);  //into searchResult
-                searchResult.setCommitCommentEventsList(commitCommentEventsList);
-                searchResult.setIssueCommentEventsList(issueCommentEventsList);
-                searchResult.setPullRequestReviewCommentEventsList(pullRequestReviewCommentEventsList);
+                }
+//                searchResult.setPushEventsList(pushEventsList);  //into searchResult
+//                searchResult.setCommitCommentEventsList(commitCommentEventsList);
+//                searchResult.setIssueCommentEventsList(issueCommentEventsList);
+//                searchResult.setPullRequestReviewCommentEventsList(pullRequestReviewCommentEventsList);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -155,8 +155,6 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
             return searchResult;
         }
 
-
-
         searchResult.setSuccessful(true);
         return searchResult;
     }
@@ -179,13 +177,15 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+        connection.setRequestProperty("Authorization", "Basic bW9yb3pvZmZ2OjNrdTV4cWR1");
+
         connection.setRequestMethod(REQUEST_METHOD);
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
 
         connection.connect();
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new BadConnectionException("Bad connection, response code: " + connection.getResponseCode()); //
+            throw new BadConnectionException("Bad connection, response code: " + connection.getResponseCode());
         }
 
         String s;
@@ -201,34 +201,34 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
         return stringBuilder.toString();
     }
 
-    private void setEvents(JSONObject rawEvent) throws JSONException {
-        switch (rawEvent.getString("type")) {
-            case "PushEvent":
-                final PushEvent pushEvent = PushEventParser.parse(rawEvent);
-                if (pushEvent != null) {
-                    pushEventsList.add(pushEvent);
-                }
-                break;
-            case "CommitCommentEvent":
-                CommitCommentEvent commitCommentEvent = CommitCommentParser.parse(rawEvent);
-                if (commitCommentEvent != null) {
-                    commitCommentEventsList.add(commitCommentEvent);
-                }
-                break;
-            case "IssueCommentEvent":
-                IssueCommentEvent issueCommentEvent = IssueCommentEventParser.parse(rawEvent);
-                if (issueCommentEvent != null) {
-                    issueCommentEventsList.add(issueCommentEvent);
-                }
-                break;
-            case "PullRequestReviewCommentEvent":
-                PullRequestReviewCommentEvent pullRequestReviewCommentEvent = PullRequestReviewCommentParser.parse(rawEvent);
-                if (pullRequestReviewCommentEvent != null) {
-                    pullRequestReviewCommentEventsList.add(pullRequestReviewCommentEvent);
-                }
-                break;
-        }
-    }
+//    private void setEvents(JSONObject rawEvent) throws JSONException {
+//        switch (rawEvent.getString("type")) {
+//            case "PushEvent":
+//                final PushEvent pushEvent = PushEventParser.parse(rawEvent);
+//                if (pushEvent != null) {
+//                    pushEventsList.add(pushEvent);
+//                }
+//                break;
+//            case "CommitCommentEvent":
+//                CommitCommentEvent commitCommentEvent = CommitCommentParser.parse(rawEvent);
+//                if (commitCommentEvent != null) {
+//                    commitCommentEventsList.add(commitCommentEvent);
+//                }
+//                break;
+//            case "IssueCommentEvent":
+//                IssueCommentEvent issueCommentEvent = IssueCommentEventParser.parse(rawEvent);
+//                if (issueCommentEvent != null) {
+//                    issueCommentEventsList.add(issueCommentEvent);
+//                }
+//                break;
+//            case "PullRequestReviewCommentEvent":
+//                PullRequestReviewCommentEvent pullRequestReviewCommentEvent = PullRequestReviewCommentParser.parse(rawEvent);
+//                if (pullRequestReviewCommentEvent != null) {
+//                    pullRequestReviewCommentEventsList.add(pullRequestReviewCommentEvent);
+//                }
+//                break;
+//        }
+//    }
 
     private void setCommits(JSONArray rawJson, String repname) throws JSONException { //remove repname
         for (int i = 0; i < rawJson.length(); i++) {

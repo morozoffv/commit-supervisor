@@ -1,4 +1,6 @@
 package com.example.vlad.commitsupervisor.parsers;
+import com.example.vlad.commitsupervisor.events.CommentEvent;
+import com.example.vlad.commitsupervisor.events.Event;
 import com.example.vlad.commitsupervisor.events.PullRequestReviewCommentEvent;
 
 import org.json.JSONException;
@@ -10,9 +12,9 @@ import org.json.JSONObject;
 
 public class PullRequestReviewCommentParser {
 
-    public static PullRequestReviewCommentEvent parse(final JSONObject rawEvent) {
+    public static CommentEvent parse(final JSONObject rawEvent) {
         try {
-            PullRequestReviewCommentEvent pullRequestReviewCommentEvent = new PullRequestReviewCommentEvent();
+            CommentEvent pullRequestReviewCommentEvent = new CommentEvent(Event.PULL_REQUEST_COMMENT);
 
             final JSONObject repo = rawEvent.getJSONObject("repo");
             pullRequestReviewCommentEvent.setRepoName(repo.getString("name"));

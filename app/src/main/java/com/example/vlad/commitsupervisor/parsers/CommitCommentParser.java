@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.example.vlad.commitsupervisor.events.CommentEvent;
 import com.example.vlad.commitsupervisor.events.CommitCommentEvent;
+import com.example.vlad.commitsupervisor.events.Event;
 import com.example.vlad.commitsupervisor.events.PushEvent;
 
 import org.json.JSONArray;
@@ -17,9 +18,9 @@ import org.json.JSONObject;
 public class CommitCommentParser {
 
     @Nullable
-    public static CommitCommentEvent parse(final JSONObject rawEvent) {
+    public static CommentEvent parse(final JSONObject rawEvent) {
         try {
-            final CommitCommentEvent commitCommentEvent = new CommitCommentEvent();
+            final CommentEvent commitCommentEvent = new CommentEvent(Event.COMMIT_COMMENT);
 
             final JSONObject repo = rawEvent.getJSONObject("repo");
             commitCommentEvent.setRepoName(repo.getString("name"));

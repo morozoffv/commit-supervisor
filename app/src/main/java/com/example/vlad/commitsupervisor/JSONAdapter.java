@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.vlad.commitsupervisor.events.Event;
 import com.example.vlad.commitsupervisor.events.PushEvent;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
 
-    private List<PushEvent> pushEventsList;
+    private List<Event> eventsList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -27,25 +28,24 @@ public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
         }
     }
 
-    public JSONAdapter(List<PushEvent> dataSet) {
-        pushEventsList = dataSet;
+    public JSONAdapter(List<Event> dataSet) {
+        eventsList = dataSet;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { //later, try to understand ViewGroup purpose
         TextView textView = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_commit, parent, false);
-        ViewHolder viewHolder = new ViewHolder(textView);
-        return viewHolder;
+        return new ViewHolder(textView);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) { //if RecyclerView freezes during scrolling, that is because this method works slow
-        holder.textView.setText(pushEventsList.get(position).getRepoName()/*.substring(0, 200)*/);
+        holder.textView.setText(eventsList.get(position).getType()/*.substring(0, 200)*/);
     }
 
     @Override
     public int getItemCount() {
-        return pushEventsList.size();
+        return eventsList.size();
     }
 
 

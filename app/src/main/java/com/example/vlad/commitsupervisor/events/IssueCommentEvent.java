@@ -13,6 +13,10 @@ public class IssueCommentEvent extends CommentEvent {
     private String comment;
     private String title;
 
+    public IssueCommentEvent() {
+        super(Event.ISSUE_COMMENT);
+    }
+
     public void setCommentUrl(String commentUrl) {
         this.commentUrl = commentUrl;
     }

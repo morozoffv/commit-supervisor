@@ -13,6 +13,10 @@ public class PullRequestReviewCommentEvent extends CommentEvent {
     private String comment;
     private String title;
 
+    public PullRequestReviewCommentEvent() {
+        super(Event.PULL_REQUEST_COMMENT);
+    }
+
     public void setCommentUrl(String commentUrl) {
         this.commentUrl = commentUrl;
     }

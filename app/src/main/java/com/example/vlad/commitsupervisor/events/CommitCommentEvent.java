@@ -14,6 +14,10 @@ public class CommitCommentEvent extends CommentEvent {
     private String commentUrl;
     private String comment;
 
+    public CommitCommentEvent() {
+        super(Event.COMMIT_COMMENT);
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -33,6 +37,8 @@ public class CommitCommentEvent extends CommentEvent {
     public String getComment() {
         return comment;
     }
+
+
 
 //    @Override
 //    public void setEventData(JSONObject rawEvent) {

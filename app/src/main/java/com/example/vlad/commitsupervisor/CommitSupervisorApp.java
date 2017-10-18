@@ -30,7 +30,7 @@ public class CommitSupervisorApp extends Application {
                 Intent broadcastIntent;
                 if(result.isSuccessful()) {
                     broadcastIntent = new Intent(ACTION_SEARCH_COMPLETED);
-                    broadcastIntent.putExtra("eventsCount", result.getPushEventsList().size());
+                    broadcastIntent.putExtra("eventsCount", result.getEvents().size());
                 }
                 else {
                     broadcastIntent = new Intent(ACTION_SEARCH_ERROR);

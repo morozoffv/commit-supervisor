@@ -13,6 +13,10 @@ public class PushEvent extends Event {
     private int commitNumber;
     private String branch;
 
+    public PushEvent() {
+        super(Event.PUSH_EVENT);
+    }
+
     public int getCommitNumber() {
         return commitNumber;
     }
