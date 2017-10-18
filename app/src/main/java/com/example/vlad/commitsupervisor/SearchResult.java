@@ -1,10 +1,6 @@
 package com.example.vlad.commitsupervisor;
 
-import com.example.vlad.commitsupervisor.events.CommitCommentEvent;
 import com.example.vlad.commitsupervisor.events.Event;
-import com.example.vlad.commitsupervisor.events.IssueCommentEvent;
-import com.example.vlad.commitsupervisor.events.PullRequestReviewCommentEvent;
-import com.example.vlad.commitsupervisor.events.PushEvent;
 
 import java.util.ArrayList;
 import java.util.List;

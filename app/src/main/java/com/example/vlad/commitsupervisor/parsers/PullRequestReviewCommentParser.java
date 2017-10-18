@@ -1,7 +1,6 @@
 package com.example.vlad.commitsupervisor.parsers;
 import com.example.vlad.commitsupervisor.events.CommentEvent;
 import com.example.vlad.commitsupervisor.events.Event;
-import com.example.vlad.commitsupervisor.events.PullRequestReviewCommentEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;

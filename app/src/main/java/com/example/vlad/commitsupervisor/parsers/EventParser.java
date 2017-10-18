@@ -2,11 +2,7 @@ package com.example.vlad.commitsupervisor.parsers;
 
 import android.support.annotation.Nullable;
 
-import com.example.vlad.commitsupervisor.events.CommitCommentEvent;
 import com.example.vlad.commitsupervisor.events.Event;
-import com.example.vlad.commitsupervisor.events.IssueCommentEvent;
-import com.example.vlad.commitsupervisor.events.PullRequestReviewCommentEvent;
-import com.example.vlad.commitsupervisor.events.PushEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -2,16 +2,8 @@ package com.example.vlad.commitsupervisor;
 
 import android.os.AsyncTask;
 
-import com.example.vlad.commitsupervisor.events.CommitCommentEvent;
 import com.example.vlad.commitsupervisor.events.Event;
-import com.example.vlad.commitsupervisor.events.IssueCommentEvent;
-import com.example.vlad.commitsupervisor.events.PullRequestReviewCommentEvent;
-import com.example.vlad.commitsupervisor.events.PushEvent;
-import com.example.vlad.commitsupervisor.parsers.CommitCommentParser;
 import com.example.vlad.commitsupervisor.parsers.EventParser;
-import com.example.vlad.commitsupervisor.parsers.IssueCommentEventParser;
-import com.example.vlad.commitsupervisor.parsers.PullRequestReviewCommentParser;
-import com.example.vlad.commitsupervisor.parsers.PushEventParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -200,35 +192,6 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
         return stringBuilder.toString();
     }
-
-//    private void setEvents(JSONObject rawEvent) throws JSONException {
-//        switch (rawEvent.getString("type")) {
-//            case "PushEvent":
-//                final PushEvent pushEvent = PushEventParser.parse(rawEvent);
-//                if (pushEvent != null) {
-//                    pushEventsList.add(pushEvent);
-//                }
-//                break;
-//            case "CommitCommentEvent":
-//                CommitCommentEvent commitCommentEvent = CommitCommentParser.parse(rawEvent);
-//                if (commitCommentEvent != null) {
-//                    commitCommentEventsList.add(commitCommentEvent);
-//                }
-//                break;
-//            case "IssueCommentEvent":
-//                IssueCommentEvent issueCommentEvent = IssueCommentEventParser.parse(rawEvent);
-//                if (issueCommentEvent != null) {
-//                    issueCommentEventsList.add(issueCommentEvent);
-//                }
-//                break;
-//            case "PullRequestReviewCommentEvent":
-//                PullRequestReviewCommentEvent pullRequestReviewCommentEvent = PullRequestReviewCommentParser.parse(rawEvent);
-//                if (pullRequestReviewCommentEvent != null) {
-//                    pullRequestReviewCommentEventsList.add(pullRequestReviewCommentEvent);
-//                }
-//                break;
-//        }
-//    }
 
     private void setCommits(JSONArray rawJson, String repname) throws JSONException { //remove repname
         for (int i = 0; i < rawJson.length(); i++) {
