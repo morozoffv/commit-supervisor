@@ -37,7 +37,6 @@ public class JSONAsyncTask extends AsyncTask <String, Void, SearchResult> {
 
     private SearchResult searchResult = new SearchResult();
 
-
     @Override
     protected SearchResult doInBackground(String... params) {
 

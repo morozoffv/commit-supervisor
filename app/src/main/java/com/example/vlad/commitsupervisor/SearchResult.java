@@ -5,7 +5,7 @@ import com.example.vlad.commitsupervisor.events.Event;
 import java.util.ArrayList;
 import java.util.List;
 
-class SearchResult {
+public class SearchResult {
 
     //private JSONArray events;
 //    private int responseCode;

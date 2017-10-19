@@ -1,5 +1,9 @@
 package com.example.vlad.commitsupervisor.layers;
 
+import android.support.annotation.Nullable;
+
+import com.example.vlad.commitsupervisor.SearchResult;
+
 import java.util.Date;
 
 /**
@@ -13,7 +17,7 @@ public interface SearchService {
 
     void fetchUserActivity(final String username, final Date date);
 
-    /* SearchResult */ void getSearchResult();
+     @Nullable SearchResult getSearchResult();
 
     void loadAutocompletionsForUsername(final String username);
 

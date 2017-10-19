@@ -51,4 +51,5 @@ public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
 
 
 
+
 }

@@ -12,16 +12,12 @@ public class Commit {
     private String message;
     private String commitUrl;
 
-    Commit() {
-
-    }
-
-    Commit(String committerName, String commitDate, String message, String commitUrl) {
-        this.committerName = committerName;
-        this.commitDate = commitDate;
-        this.message = message;
-        this.commitUrl = commitUrl;
-    }
+//    Commit(String committerName, String commitDate, String message, String commitUrl) {
+//        this.committerName = committerName;
+//        this.commitDate = commitDate;
+//        this.message = message;
+//        this.commitUrl = commitUrl;
+//    }
 
     public String getRepoName() {
         return repoName;
