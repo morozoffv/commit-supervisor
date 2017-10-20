@@ -24,17 +24,20 @@ import java.util.Locale;
  */
 
 public class ApiRepositoriesImpl implements ApiRepositories {
+
+    Network network = new NetworkImpl();
+
     @NonNull
     @Override
     public Network getNetwork() {
-        return null;
+        return network;
     }
 
     @NonNull
     @Override
     public List<String> getUserRepositories(@NonNull User user) {
 
-        Network network = new NetworkImpl();
+
         List<String> reposName = new ArrayList<>();
         try {
             URL url = new URL("https://api.github.com/users/" + user.getLogin().trim() + "/repos");
@@ -44,7 +47,6 @@ public class ApiRepositoriesImpl implements ApiRepositories {
             }
         } catch (JSONException | IOException e) {
             e.printStackTrace();
-            return null;
         }
 
         return reposName;
@@ -58,17 +60,17 @@ public class ApiRepositoriesImpl implements ApiRepositories {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
         Date date = new Date();
         try {
-            URL url = new URL("https://api.github.com/repos/" + user.getLogin().trim() + "/" + repoName + "/commits?since=" + dateFormat.format(date) + "00:00:00Z");
+            URL url = new URL("https://api.github.com/repos/" + user.getLogin().trim() + "/" + repoName + "/commits?since=" + /*dateFormat.format(date)*/"2017-10-01T" + "00:00:00Z");
             JSONArray rawCommits = new JSONArray(network.getArrayFromUrl(url));
             for (int i = 0; i < rawCommits.length(); i++) {
                 final Commit commit = CommitParser.parse(rawCommits.getJSONObject(i), repoName);
-                if (commit == null) {
+                if (commit != null) {
                     commits.add(commit);
                 }
+
             }
         } catch (JSONException | IOException e) {
             e.printStackTrace();
-            return null;
         }
 
         return commits;

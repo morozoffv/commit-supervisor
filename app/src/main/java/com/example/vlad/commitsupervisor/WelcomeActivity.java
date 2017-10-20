@@ -12,11 +12,22 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.vlad.commitsupervisor.layers.SearchService;
+import com.example.vlad.commitsupervisor.layers.SearchServiceImpl;
+
+import java.util.Date;
+
+import java.util.Locale;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 
 public class WelcomeActivity extends AppCompatActivity {
 
 //    private JSONArray json;
 //    private String strJson;
+
 
     private ProgressBar progressBar;
     private Button searchButton;
@@ -86,7 +97,11 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
 
                 hideKeyboard();
-                getCommitSupervisorApp().search(username);
+                //getCommitSupervisorApp().search(username);
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);  //if date will change during processing, can it cause the problems?
+                Date date = new Date();
+                getCommitSupervisorApp().getSearchService().fetchUserActivity(username.toString(), date); //TODO: redo username type and date filtration
+
                 changeScreenState();
 
             }

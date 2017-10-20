@@ -27,7 +27,7 @@ public class LogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        events = getCommitSupervisorApp().getResult().getEvents();
+        events = getCommitSupervisorApp().getSearchService().getSearchResult().getEvents();
 
         //stringArray = events.toString();
 

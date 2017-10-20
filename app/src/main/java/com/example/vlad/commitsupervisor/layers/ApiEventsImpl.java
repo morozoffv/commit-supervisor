@@ -21,31 +21,33 @@ import java.util.List;
  */
 
 public class ApiEventsImpl implements ApiEvents {
+
+    Network network = new NetworkImpl();
+
     @NonNull
     @Override
     public Network getNetwork() { //TODO: ?
-        return null;
+        return network;
     }
 
     @NonNull
     @Override
     public List<Event> getUserEvents(@NonNull User user) {
-        Network network = new NetworkImpl();
+
         List<Event> events = new ArrayList<>();
         JSONArray rawJson;
         for (int i = 0; i < 3; i++) {
             try {
                 URL url = new URL("https://api.github.com/users/" + user.getLogin().trim() + "/events?page=" + i + "&per_page=100");
-                rawJson = new JSONArray(network.getArrayFromUrl(url));
+                rawJson = network.getArrayFromUrl(url);
                 for (int j = 0; j < rawJson.length(); j++) {
                     final Event event = EventParser.parse(rawJson.getJSONObject(j));
-                    if (event != null) {
+                    if (event != null) {  //TODO: ?
                         events.add(event);
                     }
                 }
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
-                return null;
             }
         }
         return events;

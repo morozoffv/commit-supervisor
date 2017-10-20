@@ -50,7 +50,7 @@ public class NetworkImpl implements Network {
     private String getStringFromUrl(URL url) {
 
         try {
-            HttpURLConnection   connection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Authorization", "Basic bW9yb3pvZmZ2OjNrdTV4cWR1");
 
             connection.setRequestMethod(REQUEST_METHOD);
