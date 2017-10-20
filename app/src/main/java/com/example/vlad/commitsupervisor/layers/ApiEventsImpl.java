@@ -22,7 +22,11 @@ import java.util.List;
 
 public class ApiEventsImpl implements ApiEvents {
 
-    Network network = new NetworkImpl();
+    Network network;
+
+    public ApiEventsImpl(Network network) {
+        this.network = network;
+    }
 
     @NonNull
     @Override

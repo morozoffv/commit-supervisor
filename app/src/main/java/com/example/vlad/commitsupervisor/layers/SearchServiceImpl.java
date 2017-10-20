@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 
 import com.example.vlad.commitsupervisor.BadConnectionException;
+import com.example.vlad.commitsupervisor.BroadcastSender;
 import com.example.vlad.commitsupervisor.Commit;
 import com.example.vlad.commitsupervisor.JSONAsyncTask;
 import com.example.vlad.commitsupervisor.SearchResult;
@@ -32,13 +33,21 @@ import static com.example.vlad.commitsupervisor.CommitSupervisorApp.ACTION_SEARC
  * Created by vlad on 19/10/2017.
  */
 
-public class SearchServiceImpl extends Application implements SearchService {
+public class SearchServiceImpl implements SearchService {
 
 
-    private ApiEvents apiEvents = new ApiEventsImpl();
-    private ApiRepositories apiRepositories = new ApiRepositoriesImpl();
-    private ApiUsers apiUsers = new ApiUsersImpl();
+    private ApiEvents apiEvents;
+    private ApiRepositories apiRepositories;
+    private ApiUsers apiUsers;
     private SearchResult result;
+    private BroadcastSender broadcastSender;
+
+    public SearchServiceImpl(ApiEvents apiEvents, ApiRepositories apiRepositories, ApiUsers apiUsers, BroadcastSender broadcastSender) {
+        this.apiEvents = apiEvents;
+        this.apiRepositories = apiRepositories;
+        this.apiUsers = apiUsers;
+        this.broadcastSender = broadcastSender;
+    }
 
 
     @Override
@@ -86,9 +95,9 @@ public class SearchServiceImpl extends Application implements SearchService {
                 }
                 else {
                     broadcastIntent = new Intent(ACTION_SEARCH_ERROR);
-
                 }
-                sendBroadcast(broadcastIntent);
+
+                broadcastSender.sendBroadcast(broadcastIntent);
 
             }
 

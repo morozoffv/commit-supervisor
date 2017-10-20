@@ -27,6 +27,10 @@ public class ApiRepositoriesImpl implements ApiRepositories {
 
     Network network = new NetworkImpl();
 
+    public ApiRepositoriesImpl(Network network) {
+        this.network = network;
+    }
+
     @NonNull
     @Override
     public Network getNetwork() {
@@ -61,7 +65,7 @@ public class ApiRepositoriesImpl implements ApiRepositories {
         Date date = new Date();
         try {
             URL url = new URL("https://api.github.com/repos/" + user.getLogin().trim() + "/" + repoName + "/commits?since=" + /*dateFormat.format(date)*/"2017-10-01T" + "00:00:00Z");
-            JSONArray rawCommits = new JSONArray(network.getArrayFromUrl(url));
+            JSONArray rawCommits = network.getArrayFromUrl(url);
             for (int i = 0; i < rawCommits.length(); i++) {
                 final Commit commit = CommitParser.parse(rawCommits.getJSONObject(i), repoName);
                 if (commit != null) {
