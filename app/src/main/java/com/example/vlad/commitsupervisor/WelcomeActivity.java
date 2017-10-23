@@ -9,11 +9,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.vlad.commitsupervisor.layers.SearchService;
-import com.example.vlad.commitsupervisor.layers.SearchServiceImpl;
 
 import java.util.Date;
 
@@ -29,9 +26,12 @@ public class WelcomeActivity extends AppCompatActivity {
 //    private String strJson;
 
 
-    private ProgressBar progressBar;
+    //private ProgressBar progressBar;
     private Button searchButton;
-    private EditText searchText;
+    private EditText searchField;
+    private TextView fakeSearchField;
+    private View dimmer;
+    private TextView titleText;
 
     private boolean isSearching; //2 states of a UI: default and searching
 
@@ -81,16 +81,28 @@ public class WelcomeActivity extends AppCompatActivity {
         return TextUtils.isEmpty(username);
     }
 
-    private void initViews() {
+    private void initViews() { //TODO: onBackPressed
         searchButton = (Button) findViewById(R.id.search_button);
-        searchText = (EditText) findViewById(R.id.searchText);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        searchField = (EditText) findViewById(R.id.searchField);
+        fakeSearchField = (TextView) findViewById(R.id.fakeSearchField);
+        dimmer = findViewById(R.id.dimmer);
+        titleText = (TextView) findViewById(R.id.textTtile);
+        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        fakeSearchField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                titleText.setVisibility(View.INVISIBLE);
+                fakeSearchField.setVisibility(View.INVISIBLE);
+                dimmer.setVisibility(View.VISIBLE);
+                searchField.setVisibility(View.VISIBLE);
+            }
+        });
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isSearching = true;
-                final CharSequence username = searchText.getText();
+                final CharSequence username = searchField.getText();
                 if (isUserInputValid(username)) {
                     Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
                     return;
@@ -124,11 +136,11 @@ public class WelcomeActivity extends AppCompatActivity {
     private void changeScreenState(boolean clearText) {
         searchButton.setEnabled(!isSearching);
         searchButton.setText(isSearching ? R.string.searching_button : R.string.search_button);
-        searchText.setVisibility(isSearching ? View.INVISIBLE : View.VISIBLE);
-        progressBar.setVisibility(isSearching ? View.VISIBLE : View.GONE);
+        searchField.setVisibility(isSearching ? View.INVISIBLE : View.VISIBLE);
+        //progressBar.setVisibility(isSearching ? View.VISIBLE : View.GONE);
 
         if(clearText) {
-            searchText.setText("");
+            searchField.setText("");
         }
     }
 

@@ -3,4 +3,6 @@
     <string name="title_activity_welcome">WelcomeActivity</string>
     <string name="search_button">search</string>
     <string name="searching_button">searching...</string>
+    <string name="search_title">"Узнай\nкак работает"</string>
+    <string name="hintSearchTextEdit">Login GitHub</string>
 </resources>
