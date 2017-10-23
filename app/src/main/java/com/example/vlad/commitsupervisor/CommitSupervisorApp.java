@@ -2,7 +2,6 @@ package com.example.vlad.commitsupervisor;
 
 import android.app.Application;
 import android.content.Intent;
-import android.net.Network;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -10,6 +9,8 @@ import com.example.vlad.commitsupervisor.layers.ApiEventsImpl;
 import com.example.vlad.commitsupervisor.layers.ApiRepositoriesImpl;
 import com.example.vlad.commitsupervisor.layers.ApiUsersImpl;
 import com.example.vlad.commitsupervisor.layers.ApplicationCore;
+import com.example.vlad.commitsupervisor.layers.Network;
+import com.example.vlad.commitsupervisor.layers.NetworkImpl;
 import com.example.vlad.commitsupervisor.layers.SearchService;
 import com.example.vlad.commitsupervisor.layers.SearchServiceImpl;
 
@@ -20,6 +21,7 @@ import com.example.vlad.commitsupervisor.layers.SearchServiceImpl;
 public class CommitSupervisorApp extends Application implements ApplicationCore {
 
     @Nullable private SearchResult result;
+    private Network network = new NetworkImpl();
 
     BroadcastSender broadcastSender = new BroadcastSender() {
         @Override
@@ -28,11 +30,10 @@ public class CommitSupervisorApp extends Application implements ApplicationCore 
         }
     };
 
-    
 
-    ApiEventsImpl apiEvents = new ApiEventsImpl();
-    ApiRepositoriesImpl apiRepositories = new ApiRepositoriesImpl();
-    ApiUsersImpl apiUsers = new ApiUsersImpl();
+    ApiEventsImpl apiEvents = new ApiEventsImpl(network);
+    ApiRepositoriesImpl apiRepositories = new ApiRepositoriesImpl(network);
+    ApiUsersImpl apiUsers = new ApiUsersImpl(network);
 
     SearchService searchService = new SearchServiceImpl(apiEvents, apiRepositories, apiUsers, broadcastSender);
 

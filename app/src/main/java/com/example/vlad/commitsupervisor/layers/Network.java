@@ -12,7 +12,7 @@ import java.net.URL;
  * Created by taraskreknin on 17/10/2017.
  */
 
-interface Network {
+public interface Network {
 
     @Nullable
     JSONObject getObjectFromUrl(@NonNull final URL url);

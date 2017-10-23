@@ -19,7 +19,11 @@ import java.util.List;
 
 public class ApiUsersImpl implements ApiUsers {
 
-    Network network = new NetworkImpl();
+    final private Network network;
+
+    public ApiUsersImpl(Network network) {
+        this.network = network;
+    }
 
     @NonNull
     @Override

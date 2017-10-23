@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ApiEventsImpl implements ApiEvents {
 
-    Network network;
+    final private Network network;
 
     public ApiEventsImpl(Network network) {
         this.network = network;
@@ -44,6 +44,9 @@ public class ApiEventsImpl implements ApiEvents {
             try {
                 URL url = new URL("https://api.github.com/users/" + user.getLogin().trim() + "/events?page=" + i + "&per_page=100");
                 rawJson = network.getArrayFromUrl(url);
+                if (rawJson == null) {
+                    return events;
+                }
                 for (int j = 0; j < rawJson.length(); j++) {
                     final Event event = EventParser.parse(rawJson.getJSONObject(j));
                     if (event != null) {  //TODO: ?

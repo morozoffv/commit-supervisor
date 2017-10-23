@@ -15,6 +15,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,7 +26,7 @@ import java.util.Locale;
 
 public class ApiRepositoriesImpl implements ApiRepositories {
 
-    Network network = new NetworkImpl();
+    final private Network network;
 
     public ApiRepositoriesImpl(Network network) {
         this.network = network;
@@ -46,6 +47,9 @@ public class ApiRepositoriesImpl implements ApiRepositories {
         try {
             URL url = new URL("https://api.github.com/users/" + user.getLogin().trim() + "/repos");
             JSONArray rawJson = network.getArrayFromUrl(url);
+            if (rawJson == null) {
+                return reposName;
+            }
             for (int i = 0; i < rawJson.length(); i++) {
                 reposName.add(rawJson.getJSONObject(i).getString("name"));
             }
@@ -66,6 +70,9 @@ public class ApiRepositoriesImpl implements ApiRepositories {
         try {
             URL url = new URL("https://api.github.com/repos/" + user.getLogin().trim() + "/" + repoName + "/commits?since=" + /*dateFormat.format(date)*/"2017-10-01T" + "00:00:00Z");
             JSONArray rawCommits = network.getArrayFromUrl(url);
+            if (rawCommits == null) {
+                return commits;
+            }
             for (int i = 0; i < rawCommits.length(); i++) {
                 final Commit commit = CommitParser.parse(rawCommits.getJSONObject(i), repoName);
                 if (commit != null) {
