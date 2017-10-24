@@ -29,7 +29,9 @@ public class NetworkImpl implements Network {
     @Override
     public JSONObject getObjectFromUrl(@NonNull URL url) {
         try {
-            return new JSONObject(getStringFromUrl(url));
+            String rawStringJson = getStringFromUrl(url);
+            if (rawStringJson == null) { return null; }
+            return new JSONObject(rawStringJson);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -40,7 +42,9 @@ public class NetworkImpl implements Network {
     @Override
     public JSONArray getArrayFromUrl(@NonNull URL url) {
         try {
-            return new JSONArray(getStringFromUrl(url));
+            String rawStringJson = getStringFromUrl(url);
+            if (rawStringJson == null) { return null; }
+            return new JSONArray(rawStringJson);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

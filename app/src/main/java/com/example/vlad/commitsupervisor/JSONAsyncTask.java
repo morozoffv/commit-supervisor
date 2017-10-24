@@ -49,7 +49,7 @@ public abstract class JSONAsyncTask extends AsyncTask <String, Void, /*SearchRes
 //
 //        ArrayList<String> reposName = new ArrayList<>();    //TODO: create different class with reposName and pushed_date for data filtration
 
-        //TODO: github api has a limit for requests (60 per hour), authentificated users have a limit up to 5k requests per hour. (add auth)
+        //
 //        for (int i = 0; i < 3; i++) {   //github api allows to get only 300 events (3 x 100)
 //            try {
 //                URL url = new URL("https://api.github.com/users/" + params[0].trim() + "/events?page=" + i + "&per_page=100");

@@ -44,6 +44,9 @@ public class ApiUsersImpl implements ApiUsers {
             URL url = new URL("https://api.github.com/users/" + username.trim());
 
             JSONObject rawJsonUser = network.getObjectFromUrl(url);
+            if (rawJsonUser == null) {
+                return null;
+            }
             return UserParser.parser(rawJsonUser);
 
         } catch (IOException e) {

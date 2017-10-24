@@ -47,9 +47,9 @@ public class ApiEventsImpl implements ApiEvents {
                 if (rawJson == null) {
                     return events;
                 }
-                for (int j = 0; j < rawJson.length(); j++) {
+                for (int j = 0; j < rawJson.length(); j++) {    //TODO: github api has a limit for requests (60 per hour), authentificated users have a limit up to 5k requests per hour. (add auth)
                     final Event event = EventParser.parse(rawJson.getJSONObject(j));
-                    if (event != null) {  //TODO: ?
+                    if (event != null) {
                         events.add(event);
                     }
                 }

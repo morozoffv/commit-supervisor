@@ -19,10 +19,7 @@
         <activity android:name=".MainActivity"/>
             <!--android:screenOrientation="portrait"-->
 
-        <activity android:name=".WelcomeActivity"
-            android:windowSoftInputMode="adjustResize">
-
-                    <!--android:screenOrientation="portrait">  //dirty hack-->
+        <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

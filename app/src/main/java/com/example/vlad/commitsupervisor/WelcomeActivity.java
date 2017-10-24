@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.vlad.commitsupervisor.uiutils.Views;
+
 import java.util.Date;
 
 import java.util.Locale;
@@ -33,12 +35,12 @@ public class WelcomeActivity extends AppCompatActivity {
     private View dimmer;
     private TextView titleText;
 
-    private boolean isSearching; //2 states of a UI: default and searching
+    private boolean isSearchActivated; //2 states of a UI: default and searching
 
     final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
         @Override
         public void onCompleted(Bundle bundle) {
-            isSearching = false;
+            isSearchActivated = false;
             changeScreenState(true);
             Toast.makeText(WelcomeActivity.this, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show();
             Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
@@ -47,7 +49,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         @Override
         public void onError() {
-            isSearching = false;
+            isSearchActivated = false;
             Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
             changeScreenState();
         }
@@ -60,7 +62,7 @@ public class WelcomeActivity extends AppCompatActivity {
         searchBroadcastReceiver.onRegister(this);
 
         if (savedInstanceState != null) {
-            isSearching = savedInstanceState.getBoolean("isSearching");
+            isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
         }
         setContentView(R.layout.activity_welcome);
         initViews();
@@ -70,6 +72,11 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private CommitSupervisorApp getCommitSupervisorApp() {
         return (CommitSupervisorApp) getApplication();
+    }
+
+    private void showKeyboard() {
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.showSoftInput(getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
     }
 
     private void hideKeyboard() {
@@ -86,8 +93,7 @@ public class WelcomeActivity extends AppCompatActivity {
         searchField = (EditText) findViewById(R.id.searchField);
         fakeSearchField = (TextView) findViewById(R.id.fakeSearchField);
         dimmer = findViewById(R.id.dimmer);
-        titleText = (TextView) findViewById(R.id.textTtile);
-        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        titleText = (TextView) findViewById(R.id.textTitle);
         fakeSearchField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,13 +101,15 @@ public class WelcomeActivity extends AppCompatActivity {
                 fakeSearchField.setVisibility(View.INVISIBLE);
                 dimmer.setVisibility(View.VISIBLE);
                 searchField.setVisibility(View.VISIBLE);
+                searchField.requestFocus();
+                showKeyboard();
             }
         });
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isSearching = true;
+                isSearchActivated = true;
                 final CharSequence username = searchField.getText();
                 if (isUserInputValid(username)) {
                     Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
@@ -109,7 +117,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
 
                 hideKeyboard();
-                //getCommitSupervisorApp().search(username);
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);  //if date will change during processing, can it cause the problems?
                 Date date = new Date();
                 getCommitSupervisorApp().getSearchService().fetchUserActivity(username.toString(), date); //TODO: redo username type and date filtration
@@ -122,7 +129,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean("isSearching", isSearching);
+        savedInstanceState.putBoolean("isSearchActivated", isSearchActivated);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -134,10 +141,21 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void changeScreenState(boolean clearText) {
-        searchButton.setEnabled(!isSearching);
-        searchButton.setText(isSearching ? R.string.searching_button : R.string.search_button);
-        searchField.setVisibility(isSearching ? View.INVISIBLE : View.VISIBLE);
-        //progressBar.setVisibility(isSearching ? View.VISIBLE : View.GONE);
+        searchButton.setEnabled(!isSearchActivated);
+        searchButton.setText(isSearchActivated ? R.string.searching_button : R.string.search_button);
+        //searchField.setVisibility(isSearchActivated ? View.INVISIBLE : View.VISIBLE);
+        //progressBar.setVisibility(isSearchActivated ? View.VISIBLE : View.GONE);
+        dimmer.setVisibility(isSearchActivated ? View.VISIBLE : View.GONE);
+        searchField.setVisibility(isSearchActivated ? View.VISIBLE : View.GONE);
+        titleText.setVisibility(isSearchActivated ? View.GONE : View.VISIBLE);
+        fakeSearchField.setVisibility(isSearchActivated ? View.GONE : View.VISIBLE);
+
+
+        if (isSearchActivated)
+        Views.setInvisible();
+        Views.setVisible();
+
+        
 
         if(clearText) {
             searchField.setText("");
