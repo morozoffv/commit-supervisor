@@ -8,5 +8,6 @@
 
     <color name="searchScreenWindowBackground">#56CCF2</color>
     <color name="searchInputHintColor">#A4A4A4</color>
+    <color name="iconColor">#999999</color>
 
 </resources>

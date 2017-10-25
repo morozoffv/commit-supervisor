@@ -1,10 +1,12 @@
 package com.example.vlad.commitsupervisor;
 
+import java.io.Serializable;
+
 /**
  * Created by vlad on 11/10/2017.
  */
 
-public class User {
+public class User implements Serializable {
 
     private String login;
     private String avatarUrl;
