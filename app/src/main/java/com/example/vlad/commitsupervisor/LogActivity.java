@@ -40,7 +40,7 @@ public class LogActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         //separators
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayout.VERTICAL); //need getOrientation()
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayout.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         adapter = new JSONAdapter(events);

@@ -4,11 +4,17 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,6 +23,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +31,7 @@ import com.example.vlad.commitsupervisor.uiutils.Views;
 
 import java.util.Date;
 
+import java.util.List;
 import java.util.Locale;
 
 import java.text.DateFormat;
@@ -49,6 +57,12 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private boolean isSearchActivated; //2 states of a UI: default and with active searchEdit
 
+    private List<User> autocompleteUserList;
+
+    private RecyclerView autocompleteRecyclerView;
+    private RecyclerView.Adapter autocompleteAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
     final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
         @Override
         public void onCompleted(Bundle bundle) {
@@ -65,9 +79,23 @@ public class WelcomeActivity extends AppCompatActivity {
             Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
             changeScreenState();
         }
+
+
     };
 
-    BroadcastReceiver AutocompleteReceive = new
+    final private BroadcastReceiver autocompleteBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(CommitSupervisorApp.ACTION_USERS_RECEIVED)) { //TODO: ?
+                Bundle bundle = intent.getExtras();
+                autocompleteUserList = (List<User>) bundle.getSerializable("users");
+
+                autocompleteAdapter = new AutoCompleteAdapter(autocompleteUserList);
+                autocompleteRecyclerView.setAdapter(autocompleteAdapter);
+            }
+        }
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +103,20 @@ public class WelcomeActivity extends AppCompatActivity {
 
         searchBroadcastReceiver.onRegister(this);
 
+        IntentFilter autocompleteFilter = new IntentFilter();
+        autocompleteFilter.addAction(CommitSupervisorApp.ACTION_USERS_RECEIVED);
+        this.registerReceiver(autocompleteBroadcastReceiver, autocompleteFilter);
+
         if (savedInstanceState != null) {
             isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
         }
         setContentView(R.layout.activity_welcome);
+        getCommitSupervisorApp().getSearchService().loadAutocompletionsForUsername("username"); //TODO: !!!
         initViews();
+
+
+
+
 
         changeScreenState();
     }
@@ -115,14 +152,25 @@ public class WelcomeActivity extends AppCompatActivity {
         backButtonImage = (ImageView) findViewById(R.id.back_button_image);
         searchField = findViewById(R.id.search_field);
 
-
         fakeSearchField = (TextView) findViewById(R.id.fake_search_field);
         dimmer = findViewById(R.id.dimmer);
         titleText = (TextView) findViewById(R.id.text_title);
 
+//        TextView itemAutocompleteRecyclerView = (TextView) findViewById(R.id.item_autocompletion);
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//        int screenWidth = metrics.heightPixels;
+//
+//        itemAutocompleteRecyclerView.getLayoutParams().height = 50;
 
+        autocompleteRecyclerView = (RecyclerView) findViewById(R.id.autocomplete_recycler_view);
+        layoutManager = new LinearLayoutManager(this);
+        autocompleteRecyclerView.setLayoutManager(layoutManager);
 
-        Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL); //need getOrientation()
+        autocompleteRecyclerView.addItemDecoration(dividerItemDecoration);
+
+        Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView);
         fakeSearchField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,14 +182,16 @@ public class WelcomeActivity extends AppCompatActivity {
 //                searchEdit.setVisibility(View.VISIBLE);
 
                 Views.setInvisible(fakeSearchField, titleText);
-                Views.setVisible(dimmer, searchField, backButtonImage, searchEdit);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        searchEdit.requestFocusFromTouch();
-                    }
-                }, 500);
+                Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        searchEdit.requestFocusFromTouch();
+//                    }
+//                }, 500);
                 //showKeyboard();
+
+
             }
         });
 
@@ -176,28 +226,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 changeScreenState();
             }
         });
-
-//        searchButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                isSearchActivated = true;
-//                final CharSequence username = searchEdit.getText();
-//                if (isUserInputEmpty(username)) {
-//                    Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                hideKeyboard();
-//                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);  //if date will change during processing, can it cause the problems?
-//                Date date = new Date();
-//                getCommitSupervisorApp().getSearchService().fetchUserActivity(username.toString(), date); //TODO: redo username type and date filtration
-//
-//                changeScreenState();
-//
-//
-//
-//            }
-//        });
     }
 
     @Override
@@ -216,11 +244,11 @@ public class WelcomeActivity extends AppCompatActivity {
 
         if (isSearchActivated) {
             Views.setInvisible(titleText, fakeSearchField);
-            Views.setVisible(dimmer, searchField, backButtonImage, searchEdit);
+            Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
             //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE); //TODO: ?
         }
         else {
-            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit);
+            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
             Views.setVisible(titleText, fakeSearchField);
             hideKeyboard();
         }
@@ -237,7 +265,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (isSearchActivated) {
-            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit);
+            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
             Views.setVisible(titleText, fakeSearchField);
             isSearchActivated = false;
         }
@@ -251,5 +279,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         searchBroadcastReceiver.onUnregister(this);
+        this.unregisterReceiver(autocompleteBroadcastReceiver);
     }
 }

@@ -6,7 +6,11 @@ import android.content.Intent;
  * Created by vlad on 20/10/2017.
  */
 
+/*
+* Allow me to use sendBroadcast from initial Application class
+* */
+
 public interface BroadcastSender {
 
-    public void sendBroadcast(Intent intent);
+    void sendBroadcast(Intent intent);
 }

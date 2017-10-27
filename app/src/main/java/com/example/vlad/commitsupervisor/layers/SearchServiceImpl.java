@@ -158,16 +158,18 @@ public class SearchServiceImpl implements SearchService {
         }
 
         User user = UserParser.parser(jsonObject);
+        User user2 = UserParser.parser(jsonObject);
+        user2.setLogin("vlad");
 
 
         userList.add(user);
         userList.add(user);
         userList.add(user);
         userList.add(user);
-        userList.add(user);
+        userList.add(user2);
 
         Intent intentUser = new Intent(CommitSupervisorApp.ACTION_USERS_RECEIVED);
-        intentUser.putExtra("user", userList);
+        intentUser.putExtra("users", userList);
         broadcastSender.sendBroadcast(intentUser);
 
 
