@@ -13,7 +13,9 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
@@ -111,12 +113,9 @@ public class WelcomeActivity extends AppCompatActivity {
             isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
         }
         setContentView(R.layout.activity_welcome);
-        getCommitSupervisorApp().getSearchService().loadAutocompletionsForUsername("username"); //TODO: !!!
+        //getCommitSupervisorApp().getSearchService().loadAutocompletionsForUsername("username"); //TODO: !!!
+
         initViews();
-
-
-
-
 
         changeScreenState();
     }
@@ -146,7 +145,6 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-//        searchButton = (Button) findViewById(R.id.search_button);
 
         searchEdit = (EditText) findViewById(R.id.search_edit);
         backButtonImage = (ImageView) findViewById(R.id.back_button_image);
@@ -155,13 +153,6 @@ public class WelcomeActivity extends AppCompatActivity {
         fakeSearchField = (TextView) findViewById(R.id.fake_search_field);
         dimmer = findViewById(R.id.dimmer);
         titleText = (TextView) findViewById(R.id.text_title);
-
-//        TextView itemAutocompleteRecyclerView = (TextView) findViewById(R.id.item_autocompletion);
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        int screenWidth = metrics.heightPixels;
-//
-//        itemAutocompleteRecyclerView.getLayoutParams().height = 50;
 
         autocompleteRecyclerView = (RecyclerView) findViewById(R.id.autocomplete_recycler_view);
         layoutManager = new LinearLayoutManager(this);
@@ -173,24 +164,11 @@ public class WelcomeActivity extends AppCompatActivity {
         Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView);
         fakeSearchField.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { //TODO: remove listeners to the other method
                 isSearchActivated = true;
-//
-//                titleText.setVisibility(View.INVISIBLE);
-//                fakeSearchField.setVisibility(View.INVISIBLE);
-//                dimmer.setVisibility(View.VISIBLE);
-//                searchEdit.setVisibility(View.VISIBLE);
 
                 Views.setInvisible(fakeSearchField, titleText);
                 Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        searchEdit.requestFocusFromTouch();
-//                    }
-//                }, 500);
-                //showKeyboard();
-
 
             }
         });
@@ -215,6 +193,24 @@ public class WelcomeActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
+            }
+        });
+
+        searchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                final CharSequence username = searchEdit.getText();
+                getCommitSupervisorApp().getSearchService().loadAutocompletionsForUsername(username.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 

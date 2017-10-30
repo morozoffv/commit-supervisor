@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.example.vlad.commitsupervisor.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,5 +19,8 @@ interface ApiUsers extends Api {
 
     @Nullable
     User getUser(final String username);
+
+    @Nullable
+    ArrayList<User> getSearchUsers(final String username, final int quantity);
 
 }

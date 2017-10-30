@@ -6,11 +6,12 @@ import android.support.annotation.Nullable;
 import com.example.vlad.commitsupervisor.User;
 import com.example.vlad.commitsupervisor.parsers.UserParser;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,12 +48,31 @@ public class ApiUsersImpl implements ApiUsers {
             if (rawJsonUser == null) {
                 return null;
             }
-            return UserParser.parser(rawJsonUser);
+            return UserParser.parse(rawJsonUser);
 
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
 
+    }
+
+    @Nullable
+    @Override
+    public ArrayList<User> getSearchUsers(String username, int quantity) {
+        try {
+            URL url = new URL("https://api.github.com/search/users?q=" + username.trim());
+
+            JSONObject rawJsonUsers = network.getObjectFromUrl(url);
+            if (rawJsonUsers == null) {
+                return null;
+            }
+            List<User> users = UserParser.searchParse(rawJsonUsers).subList(0, quantity); //TODO: i shouldnt cut list after parsing, excessive work
+            return (ArrayList<User>) users; //TODO: i can't return List<>
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
