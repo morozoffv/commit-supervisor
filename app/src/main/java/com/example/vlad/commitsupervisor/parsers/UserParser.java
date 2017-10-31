@@ -29,14 +29,14 @@ public class UserParser {
         return user;
     }
 
-    public static ArrayList<User> searchParse(JSONObject rawUsers) { //for autocompletions
+    public static ArrayList<User> searchParse(JSONObject rawUsers, int quantity) { //for autocompletions
         JSONArray jsonSearchUsers = null;
         User user = new User();
         ArrayList<User> searchUsers = new ArrayList<>();
         try {
             jsonSearchUsers = rawUsers.getJSONArray("items");
 
-            for (int i = 0; i < jsonSearchUsers.length(); i++) {
+            for (int i = 0; i < quantity; i++) {
                 searchUsers.add(parse(jsonSearchUsers.getJSONObject(i)));
             }
 

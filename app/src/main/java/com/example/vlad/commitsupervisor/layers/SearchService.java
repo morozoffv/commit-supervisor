@@ -19,6 +19,6 @@ public interface SearchService {
 
      @Nullable SearchResult getSearchResult();
 
-    void loadAutocompletionsForUsername(final String username);
+    void loadAutoCompletionsForUsername(final String username);
 
 }

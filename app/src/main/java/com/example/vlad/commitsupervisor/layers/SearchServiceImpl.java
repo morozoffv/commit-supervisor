@@ -107,22 +107,22 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public void loadAutocompletionsForUsername(final String username) {
+    public void loadAutoCompletionsForUsername(final String username) {
 
         AutoCompleteAsyncTask autoCompleteAsyncTask = new AutoCompleteAsyncTask() {
             @Override
             protected void onPostExecute(Void aVoid) {
 
-                /*work with broadcasts*/
                 Intent intentUser = new Intent(CommitSupervisorApp.ACTION_USERS_RECEIVED);
                 intentUser.putExtra("users", userList);
+                intentUser.putExtra("input", username);
                 broadcastSender.sendBroadcast(intentUser);
 
             }
 
             @Override
             protected Void doInBackground(String... params) {
-                userList = apiUsers.getSearchUsers(username, 10);
+                userList = (ArrayList<User>) apiUsers.getSearchUsers(username, 10);
 
                 return null;
             }

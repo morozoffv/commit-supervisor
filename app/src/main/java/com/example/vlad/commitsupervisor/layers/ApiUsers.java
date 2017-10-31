@@ -21,6 +21,6 @@ interface ApiUsers extends Api {
     User getUser(final String username);
 
     @Nullable
-    ArrayList<User> getSearchUsers(final String username, final int quantity);
+    List<User> getSearchUsers(final String username, final int quantity);
 
 }

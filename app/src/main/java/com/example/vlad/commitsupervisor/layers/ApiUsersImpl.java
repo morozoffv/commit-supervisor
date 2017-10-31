@@ -59,7 +59,7 @@ public class ApiUsersImpl implements ApiUsers {
 
     @Nullable
     @Override
-    public ArrayList<User> getSearchUsers(String username, int quantity) {
+    public List<User> getSearchUsers(String username, int quantity) {
         try {
             URL url = new URL("https://api.github.com/search/users?q=" + username.trim());
 
@@ -67,8 +67,9 @@ public class ApiUsersImpl implements ApiUsers {
             if (rawJsonUsers == null) {
                 return null;
             }
-            List<User> users = UserParser.searchParse(rawJsonUsers).subList(0, quantity); //TODO: i shouldnt cut list after parsing, excessive work
-            return (ArrayList<User>) users; //TODO: i can't return List<>
+            List<User> users = new ArrayList<>();
+            users.addAll(UserParser.searchParse(rawJsonUsers, quantity)); //TODO: i don't understand why it works
+            return users;
 
         } catch (IOException e) {
             e.printStackTrace();

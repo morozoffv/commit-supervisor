@@ -1,13 +1,10 @@
 package com.example.vlad.commitsupervisor;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Looper;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,13 +13,10 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,9 +85,14 @@ public class WelcomeActivity extends AppCompatActivity {
             if (intent.getAction().equals(CommitSupervisorApp.ACTION_USERS_RECEIVED)) { //TODO: ?
                 Bundle bundle = intent.getExtras();
                 autocompleteUserList = (List<User>) bundle.getSerializable("users");
+                String currentInput = bundle.getString("input");
 
-                autocompleteAdapter = new AutoCompleteAdapter(autocompleteUserList);
-                autocompleteRecyclerView.setAdapter(autocompleteAdapter);
+                if ((searchEdit.getText().toString().equals(currentInput))) {
+                    if (autocompleteUserList != null) {
+                        autocompleteAdapter = new AutoCompleteAdapter(autocompleteUserList);
+                        autocompleteRecyclerView.setAdapter(autocompleteAdapter);
+                    }
+                }
             }
         }
 
@@ -113,7 +112,7 @@ public class WelcomeActivity extends AppCompatActivity {
             isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
         }
         setContentView(R.layout.activity_welcome);
-        //getCommitSupervisorApp().getSearchService().loadAutocompletionsForUsername("username"); //TODO: !!!
+        //getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername("username"); //TODO: !!!
 
         initViews();
 
@@ -166,14 +165,12 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) { //TODO: remove listeners to the other method
                 isSearchActivated = true;
-
                 Views.setInvisible(fakeSearchField, titleText);
                 Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
-
             }
         });
 
-        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() { //after pressing on search button on keyboard
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -183,7 +180,6 @@ public class WelcomeActivity extends AppCompatActivity {
                         Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
                         return true;
                     }
-
                     hideKeyboard();
                     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
                     Date date = new Date();
@@ -196,6 +192,21 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
+        CountDownTimer countDownTimer = new CountDownTimer(1000, 0) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+//                Toast.makeText(WelcomeActivity.this, "AsyncTask activated", Toast.LENGTH_SHORT).show();
+//                if (!searchEdit.getText().toString().trim().equals("")) {
+//                    getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername(username.toString());
+//                }
+            }
+        };
+
         searchEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -204,8 +215,21 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                countDownTimer.cancel();
                 final CharSequence username = searchEdit.getText();
-                getCommitSupervisorApp().getSearchService().loadAutocompletionsForUsername(username.toString());
+
+//
+//
+//                countDownTimer.start();
+//
+//                if (textChangedTime + 1000 == currentTime) {
+//
+//                }
+
+                Toast.makeText(WelcomeActivity.this, "AsyncTask activated", Toast.LENGTH_SHORT).show();
+                if (!searchEdit.getText().toString().trim().equals("")) {
+                    getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername(username.toString());
+                }
             }
 
             @Override
