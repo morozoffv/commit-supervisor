@@ -41,6 +41,7 @@ public class CommitSupervisorApp extends Application implements ApplicationCore 
     final public static String ACTION_SEARCH_COMPLETED = "commitsupervisor.SEARCH_COMPLETED";
     final public static String ACTION_SEARCH_ERROR = "commitsupervisor.SEARCH_ERROR";
     final public static String ACTION_USERS_RECEIVED = "commitsupervisor.USERS_RECEIVED";
+    //final public static String ACTION_AUTOCOMPLETE_USER_CLICKED = "commitsupervisor.AUTOCOMPLETE_USER_CLICKED";
 
 
     @Override

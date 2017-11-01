@@ -16,15 +16,24 @@ import java.util.List;
 public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapter.ViewHolder> {
 
     private List<User> users;
+    OnItemClickListener itemClickListener;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+    public interface OnItemClickListener {
+        void onItemClick(View v, int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textView;
+        public int position;
+
         public ViewHolder(TextView v) {
             super(v); //itemView = v;
             textView = v;
         }
     }
+
 
     public AutoCompleteAdapter(List<User> users) {
         this.users = users;
@@ -42,7 +51,9 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), users.get(holder.getAdapterPosition()).getLogin() + " " + position, Toast.LENGTH_SHORT).show();
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(v, holder.getAdapterPosition()); //TODO:?
+                }
             }
         });
     }
@@ -50,5 +61,9 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
     @Override
     public int getItemCount() {
         return users.size();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
     }
 }

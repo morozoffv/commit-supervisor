@@ -1,6 +1,7 @@
 package com.example.vlad.commitsupervisor.layers;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.example.vlad.commitsupervisor.AutoCompleteAsyncTask;
 import com.example.vlad.commitsupervisor.BroadcastSender;
@@ -27,6 +28,8 @@ import static com.example.vlad.commitsupervisor.CommitSupervisorApp.ACTION_SEARC
  */
 
 public class SearchServiceImpl implements SearchService {
+
+    private static final String TAG = "SearchServiceImpl";
 
 
     private ApiEvents apiEvents;
@@ -112,17 +115,20 @@ public class SearchServiceImpl implements SearchService {
         AutoCompleteAsyncTask autoCompleteAsyncTask = new AutoCompleteAsyncTask() {
             @Override
             protected void onPostExecute(Void aVoid) {
-
+                Log.i(TAG, "onPostExecute: " + username);
                 Intent intentUser = new Intent(CommitSupervisorApp.ACTION_USERS_RECEIVED);
                 intentUser.putExtra("users", userList);
                 intentUser.putExtra("input", username);
                 broadcastSender.sendBroadcast(intentUser);
 
+
             }
 
             @Override
             protected Void doInBackground(String... params) {
+
                 userList = (ArrayList<User>) apiUsers.getSearchUsers(username, 10);
+                Log.i(TAG, "doInBackground: " + username);
 
                 return null;
             }

@@ -20,7 +20,7 @@ interface ApiUsers extends Api {
     @Nullable
     User getUser(final String username);
 
-    @Nullable
+    @NonNull
     List<User> getSearchUsers(final String username, final int quantity);
 
 }

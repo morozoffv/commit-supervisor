@@ -41,7 +41,7 @@ public class UserParser {
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return searchUsers;

@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -43,6 +44,8 @@ public class WelcomeActivity extends AppCompatActivity {
     //private ProgressBar progressBar;
 //    private Button searchButton;
 
+    private static final String TAG = "WelcomeActivity";
+
     private EditText searchEdit;
     private ImageView backButtonImage;
     private View searchField;
@@ -56,7 +59,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private List<User> autocompleteUserList;
 
     private RecyclerView autocompleteRecyclerView;
-    private RecyclerView.Adapter autocompleteAdapter;
+    private AutoCompleteAdapter autocompleteAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
     final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
@@ -82,21 +85,29 @@ public class WelcomeActivity extends AppCompatActivity {
     final private BroadcastReceiver autocompleteBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(CommitSupervisorApp.ACTION_USERS_RECEIVED)) { //TODO: ?
-                Bundle bundle = intent.getExtras();
-                autocompleteUserList = (List<User>) bundle.getSerializable("users");
-                String currentInput = bundle.getString("input");
-
-                if ((searchEdit.getText().toString().equals(currentInput))) {
-                    if (autocompleteUserList != null) {
-                        autocompleteAdapter = new AutoCompleteAdapter(autocompleteUserList);
-                        autocompleteRecyclerView.setAdapter(autocompleteAdapter);
-                    }
-                }
+            if (!intent.getAction().equals(CommitSupervisorApp.ACTION_USERS_RECEIVED)) {
+                return;
             }
-        }
+            Bundle bundle = intent.getExtras();
+            //noinspection unchecked
+            autocompleteUserList = (List<User>) bundle.getSerializable("users");
+            String currentInput = bundle.getString("input");
 
+            if (!(searchEdit.getText().toString().equals(currentInput)) || autocompleteUserList == null) { //if current input is the same, that upload right now, then upload it until input wasn't change
+                return;
+            }
+            autocompleteAdapter = new AutoCompleteAdapter(autocompleteUserList);
+            autocompleteRecyclerView.setAdapter(autocompleteAdapter);
+            Log.i(TAG, "onReceive: " + currentInput);
+            autocompleteAdapter.setOnItemClickListener(new AutoCompleteAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
+                    Toast.makeText(WelcomeActivity.this, position + "", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +123,6 @@ public class WelcomeActivity extends AppCompatActivity {
             isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
         }
         setContentView(R.layout.activity_welcome);
-        //getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername("username"); //TODO: !!!
-
         initViews();
 
         changeScreenState();
@@ -123,20 +132,15 @@ public class WelcomeActivity extends AppCompatActivity {
         return (CommitSupervisorApp) getApplication();
     }
 
-    private void showKeyboard() {
+    private void showKeyboard(View v) {
+        v.requestFocus();
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.showSoftInput(getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
+        inputManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = this.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(this);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+        InputMethodManager inputManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
+        inputManager.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     private boolean isUserInputEmpty(CharSequence username) {
@@ -161,10 +165,14 @@ public class WelcomeActivity extends AppCompatActivity {
         autocompleteRecyclerView.addItemDecoration(dividerItemDecoration);
 
         Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView);
+
+
         fakeSearchField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { //TODO: remove listeners to the other method
                 isSearchActivated = true;
+                showKeyboard(searchEdit);
+
                 Views.setInvisible(fakeSearchField, titleText);
                 Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
             }
@@ -174,78 +182,57 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    //isSearchActivated = true;
-                    final CharSequence username = searchEdit.getText();
-                    if (isUserInputEmpty(username)) {
-                        Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                    hideKeyboard();
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
-                    Date date = new Date();
-                    getCommitSupervisorApp().getSearchService().fetchUserActivity(username.toString(), date); //TODO: redo username type and date filtration
-
-                    changeScreenState();
-                    return true;
+                    return preFetchUserActivity();
                 }
                 return false;
             }
         });
 
-        CountDownTimer countDownTimer = new CountDownTimer(1000, 0) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-//                Toast.makeText(WelcomeActivity.this, "AsyncTask activated", Toast.LENGTH_SHORT).show();
-//                if (!searchEdit.getText().toString().trim().equals("")) {
-//                    getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername(username.toString());
-//                }
-            }
-        };
 
         searchEdit.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                countDownTimer.cancel();
                 final CharSequence username = searchEdit.getText();
 
-//
-//
-//                countDownTimer.start();
-//
-//                if (textChangedTime + 1000 == currentTime) {
-//
-//                }
-
-                Toast.makeText(WelcomeActivity.this, "AsyncTask activated", Toast.LENGTH_SHORT).show();
                 if (!searchEdit.getText().toString().trim().equals("")) {
                     getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername(username.toString());
                 }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         backButtonImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isSearchActivated = false;
-
                 changeScreenState();
+                hideKeyboard();
             }
         });
+
+
+
+
+    }
+
+    private boolean preFetchUserActivity() {
+        final CharSequence username = searchEdit.getText();
+        if (isUserInputEmpty(username)) {
+            Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        hideKeyboard();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
+        Date date = new Date();
+        getCommitSupervisorApp().getSearchService().fetchUserActivity(username.toString(), date); //TODO: redo username type and date filtration
+
+        changeScreenState();
+        return true;
     }
 
     @Override
@@ -265,7 +252,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (isSearchActivated) {
             Views.setInvisible(titleText, fakeSearchField);
             Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
-            //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE); //TODO: ?
+            hideKeyboard();
         }
         else {
             Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);

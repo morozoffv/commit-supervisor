@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,7 +58,7 @@ public class ApiUsersImpl implements ApiUsers {
 
     }
 
-    @Nullable
+    @NonNull
     @Override
     public List<User> getSearchUsers(String username, int quantity) {
         try {
@@ -65,15 +66,15 @@ public class ApiUsersImpl implements ApiUsers {
 
             JSONObject rawJsonUsers = network.getObjectFromUrl(url);
             if (rawJsonUsers == null) {
-                return null;
+                return Collections.emptyList();
             }
             List<User> users = new ArrayList<>();
-            users.addAll(UserParser.searchParse(rawJsonUsers, quantity)); //TODO: i don't understand why it works
+            users.addAll(UserParser.searchParse(rawJsonUsers, quantity));
             return users;
 
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return Collections.emptyList();
         }
     }
 }
