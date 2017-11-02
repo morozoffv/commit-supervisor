@@ -33,6 +33,8 @@ import java.util.Locale;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class WelcomeActivity extends AppCompatActivity {
@@ -89,11 +91,13 @@ public class WelcomeActivity extends AppCompatActivity {
                 return;
             }
             Bundle bundle = intent.getExtras();
+
             //noinspection unchecked
             autocompleteUserList = (List<User>) bundle.getSerializable("users");
+
             String currentInput = bundle.getString("input");
 
-            if (!(searchEdit.getText().toString().equals(currentInput)) || autocompleteUserList == null) { //if current input is the same, that upload right now, then upload it until input wasn't change
+            if (!(searchEdit.getText().toString().trim().equals(currentInput)) || autocompleteUserList == null) { //if current input is the same, that upload right now, then upload it until input wasn't change
                 return;
             }
             autocompleteAdapter = new AutoCompleteAdapter(autocompleteUserList);
@@ -102,7 +106,7 @@ public class WelcomeActivity extends AppCompatActivity {
             autocompleteAdapter.setOnItemClickListener(new AutoCompleteAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View v, int position) {
-                    Toast.makeText(WelcomeActivity.this, position + "", Toast.LENGTH_SHORT).show();
+                    preFetchUserActivity(autocompleteUserList.get(position).getLogin());
                 }
             });
         }
@@ -161,7 +165,7 @@ public class WelcomeActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         autocompleteRecyclerView.setLayoutManager(layoutManager);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL); //need getOrientation()
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
         autocompleteRecyclerView.addItemDecoration(dividerItemDecoration);
 
         Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView);
@@ -182,7 +186,9 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    return preFetchUserActivity();
+                    return preFetchUserActivity(searchEdit.getText().toString());
+                    //work with changing state and ui
+                    //startActivity();
                 }
                 return false;
             }
@@ -194,16 +200,27 @@ public class WelcomeActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                final CharSequence username = searchEdit.getText();
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-                if (!searchEdit.getText().toString().trim().equals("")) {
-                    getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername(username.toString());
-                }
-            }
+            Timer timer = new Timer();
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+
+                timer.cancel();
+
+                timer = new Timer();
+
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        String username = searchEdit.getText().toString().trim();
+                        if (!(!username.equals("") && username.length() >= 3)) { return; }
+                        getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername(username);
+                    }
+                },
+                5000);
+            }
         });
 
         backButtonImage.setOnClickListener(new View.OnClickListener() {
@@ -220,8 +237,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
-    private boolean preFetchUserActivity() {
-        final CharSequence username = searchEdit.getText();
+    private boolean preFetchUserActivity(String username) {
+
         if (isUserInputEmpty(username)) {
             Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
             return true;
@@ -229,7 +246,7 @@ public class WelcomeActivity extends AppCompatActivity {
         hideKeyboard();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
         Date date = new Date();
-        getCommitSupervisorApp().getSearchService().fetchUserActivity(username.toString(), date); //TODO: redo username type and date filtration
+        getCommitSupervisorApp().getSearchService().fetchUserActivity(username, date); //TODO: redo username type and date filtration
 
         changeScreenState();
         return true;

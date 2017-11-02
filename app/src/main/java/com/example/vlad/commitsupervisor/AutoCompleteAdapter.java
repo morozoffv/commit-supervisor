@@ -16,7 +16,7 @@ import java.util.List;
 public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapter.ViewHolder> {
 
     private List<User> users;
-    OnItemClickListener itemClickListener;
+    private OnItemClickListener itemClickListener;
 
 
     public interface OnItemClickListener {

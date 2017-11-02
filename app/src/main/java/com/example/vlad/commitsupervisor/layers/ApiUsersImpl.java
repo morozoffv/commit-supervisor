@@ -62,13 +62,14 @@ public class ApiUsersImpl implements ApiUsers {
     @Override
     public List<User> getSearchUsers(String username, int quantity) {
         try {
+            List<User> users = new ArrayList<>();
             URL url = new URL("https://api.github.com/search/users?q=" + username.trim());
 
             JSONObject rawJsonUsers = network.getObjectFromUrl(url);
             if (rawJsonUsers == null) {
                 return Collections.emptyList();
             }
-            List<User> users = new ArrayList<>();
+
             users.addAll(UserParser.searchParse(rawJsonUsers, quantity));
             return users;
 

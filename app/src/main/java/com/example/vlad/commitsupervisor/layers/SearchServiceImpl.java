@@ -126,8 +126,9 @@ public class SearchServiceImpl implements SearchService {
 
             @Override
             protected Void doInBackground(String... params) {
-
-                userList = (ArrayList<User>) apiUsers.getSearchUsers(username, 10);
+                List<User> userList = apiUsers.getSearchUsers(username, 10);
+                SearchServiceImpl.this.userList.clear();
+                SearchServiceImpl.this.userList.addAll(userList);
                 Log.i(TAG, "doInBackground: " + username);
 
                 return null;

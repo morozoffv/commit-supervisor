@@ -29,9 +29,6 @@ public class LogActivity extends AppCompatActivity {
 
         events = getCommitSupervisorApp().getSearchService().getSearchResult().getEvents();
 
-        //stringArray = events.toString();
-
-
         setContentView(R.layout.activity_log);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -45,33 +42,15 @@ public class LogActivity extends AppCompatActivity {
 
         adapter = new JSONAdapter(events);
         recyclerView.setAdapter(adapter);
-
-
-
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringArray);
-//        setListAdapter(arrayAdapter);
-        //ListView listView = (ListView) findViewById(R.id.listView);
-
     }
 
     private CommitSupervisorApp getCommitSupervisorApp() {
         return (CommitSupervisorApp) getApplication();
     }
 
-//    //should i pass to this activity just a string array and make cast to string array from jsonarray in other place?
-//    private String[] JSONArrayToStringArray(JSONArray jsonArray) {  //how to change var name in one single method?
-//        String[] stringArray = new String[jsonArray.length()];
-//
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            try {
-//                stringArray[i] = jsonArray.getJSONObject(i).toString();
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return stringArray;
-//    }
+    private void preFetchUserActivity() {
+        //get user activity
+    }
 
 
 
