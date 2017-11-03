@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.CountDownTimer;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.example.vlad.commitsupervisor.uiutils.Views;
 
+import java.util.Collections;
 import java.util.Date;
 
 import java.util.List;
@@ -64,25 +66,25 @@ public class WelcomeActivity extends AppCompatActivity {
     private AutoCompleteAdapter autocompleteAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
-        @Override
-        public void onCompleted(Bundle bundle) {
-            isSearchActivated = false;
-            changeScreenState(true);
-            Toast.makeText(WelcomeActivity.this, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show();
-            Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
-            startActivity(intentActivity);
-        }
-
-        @Override
-        public void onError() {
-            isSearchActivated = false;
-            Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-            changeScreenState();
-        }
-
-
-    };
+//    final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
+//        @Override
+//        public void onCompleted(Bundle bundle) {
+//            isSearchActivated = false;
+//            changeScreenState(true);
+//            Toast.makeText(WelcomeActivity.this, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show();
+//            Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+//            startActivity(intentActivity);
+//        }
+//
+//        @Override
+//        public void onError() {
+//            isSearchActivated = false;
+//            Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+//            changeScreenState();
+//        }
+//
+//
+//    };
 
     final private BroadcastReceiver autocompleteBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -106,7 +108,13 @@ public class WelcomeActivity extends AppCompatActivity {
             autocompleteAdapter.setOnItemClickListener(new AutoCompleteAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View v, int position) {
-                    preFetchUserActivity(autocompleteUserList.get(position).getLogin());
+                    isSearchActivated = false;
+                    hideKeyboard();
+                    changeScreenState(true);
+                    Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                    intentActivity.putExtra("username", autocompleteUserList.get(position).getLogin());
+                    startActivity(intentActivity);
+
                 }
             });
         }
@@ -116,8 +124,6 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        searchBroadcastReceiver.onRegister(this);
 
         IntentFilter autocompleteFilter = new IntentFilter();
         autocompleteFilter.addAction(CommitSupervisorApp.ACTION_USERS_RECEIVED);
@@ -166,34 +172,20 @@ public class WelcomeActivity extends AppCompatActivity {
         autocompleteRecyclerView.setLayoutManager(layoutManager);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
+        dividerItemDecoration.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
         autocompleteRecyclerView.addItemDecoration(dividerItemDecoration);
 
         Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView);
-
 
         fakeSearchField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { //TODO: remove listeners to the other method
                 isSearchActivated = true;
                 showKeyboard(searchEdit);
-
                 Views.setInvisible(fakeSearchField, titleText);
                 Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
             }
         });
-
-        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() { //after pressing on search button on keyboard
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    return preFetchUserActivity(searchEdit.getText().toString());
-                    //work with changing state and ui
-                    //startActivity();
-                }
-                return false;
-            }
-        });
-
 
         searchEdit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -203,23 +195,19 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             Timer timer = new Timer();
-
             @Override
             public void afterTextChanged(Editable s) {
-
                 timer.cancel();
-
                 timer = new Timer();
-
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         String username = searchEdit.getText().toString().trim();
-                        if (!(!username.equals("") && username.length() >= 3)) { return; }
+                        if (!(!username.equals("") && username.length() >= 3)) { return; } //if username is empty and user writes less than 3 symbols
                         getCommitSupervisorApp().getSearchService().loadAutoCompletionsForUsername(username);
                     }
                 },
-                5000);
+                500);
             }
         });
 
@@ -232,25 +220,43 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
-
-
+        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() { //after pressing on search button on keyboard
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String username = searchEdit.getText().toString().trim();
+                    if (isUserInputEmpty(username)) {
+                        Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    isSearchActivated = false;
+                    hideKeyboard();
+                    changeScreenState(true);
+                    Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                    intentActivity.putExtra("username", username);
+                    startActivity(intentActivity);
+                    return true;
+                }
+                return false;
+            }
+        });
 
     }
 
-    private boolean preFetchUserActivity(String username) {
-
-        if (isUserInputEmpty(username)) {
-            Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        hideKeyboard();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
-        Date date = new Date();
-        getCommitSupervisorApp().getSearchService().fetchUserActivity(username, date); //TODO: redo username type and date filtration
-
-        changeScreenState();
-        return true;
-    }
+//    private boolean preFetchUserActivity(String username) {
+//
+//        if (isUserInputEmpty(username)) {
+//            Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
+//            return true;
+//        }
+//        hideKeyboard();
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
+//        Date date = new Date();
+//        getCommitSupervisorApp().getSearchService().fetchUserActivity(username, date);
+//
+//        changeScreenState();
+//        return true;
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -302,7 +308,6 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        searchBroadcastReceiver.onUnregister(this);
         this.unregisterReceiver(autocompleteBroadcastReceiver);
     }
 }

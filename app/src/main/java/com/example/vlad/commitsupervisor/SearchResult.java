@@ -1,8 +1,11 @@
 package com.example.vlad.commitsupervisor;
 
+import android.support.annotation.NonNull;
+
 import com.example.vlad.commitsupervisor.events.Event;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SearchResult {
@@ -51,7 +54,11 @@ public class SearchResult {
         events.add(event);
     }
 
+    @NonNull
     public List<Event> getEvents() {
+        if (events == null) {
+            return Collections.emptyList();
+        }
         return events;
     }
 
