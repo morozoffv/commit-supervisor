@@ -1,12 +1,19 @@
 package com.example.vlad.commitsupervisor;
 
+import android.graphics.Outline;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -17,6 +24,7 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
 
     private List<User> users;
     private OnItemClickListener itemClickListener;
+    Drawable avatarDrawable;
 
 
     public interface OnItemClickListener {
@@ -26,11 +34,15 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textView;
+        public ImageView avatar;
+        //public ConstraintLayout itemLayout;
+
         public int position;
 
-        public ViewHolder(TextView v) {
+        public ViewHolder(ConstraintLayout v) {
             super(v); //itemView = v;
-            textView = v;
+            textView = (TextView) v.findViewById(R.id.autocompletion_text);
+            avatar = (ImageView) v.findViewById(R.id.autocompletion_avatar);
         }
     }
 
@@ -41,13 +53,26 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        TextView textView = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_autocompletion, parent, false);
-        return new ViewHolder(textView);
+        View v =  LayoutInflater.from(parent.getContext()).inflate(R.layout.item_autocompletion, parent, false);
+        return new ViewHolder((ConstraintLayout) v);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.textView.setText(users.get(position).getLogin());
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                avatarDrawable = loadImageFromWebOperations(users.get(position).getAvatarUrl());
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                holder.avatar.setImageDrawable(avatarDrawable);
+            }
+        }.execute();
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,5 +90,19 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
 
     public void setOnItemClickListener(OnItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
+    }
+
+    private Drawable loadImageFromWebOperations(String url) {
+        Drawable d = null;
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+             d = Drawable.createFromStream(is, "src name");
+
+            return d;
+        } catch (Exception e) {
+            return d;
+        }
+
+
     }
 }

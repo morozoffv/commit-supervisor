@@ -115,7 +115,7 @@ public class SearchServiceImpl implements SearchService {
         AutoCompleteAsyncTask autoCompleteAsyncTask = new AutoCompleteAsyncTask() {
             @Override
             protected void onPostExecute(Void aVoid) {
-                Log.i(TAG, "onPostExecute: " + username);
+                //Log.i(TAG, "onPostExecute: " + username);
                 Intent intentUser = new Intent(CommitSupervisorApp.ACTION_USERS_RECEIVED);
                 intentUser.putExtra("users", userList);
                 intentUser.putExtra("input", username);
@@ -126,10 +126,11 @@ public class SearchServiceImpl implements SearchService {
 
             @Override
             protected Void doInBackground(String... params) {
-                List<User> userList = apiUsers.getSearchUsers(username, 10);
+                List<User> userList = apiUsers.getSearchUsers(username, 1000);
                 SearchServiceImpl.this.userList.clear();
                 SearchServiceImpl.this.userList.addAll(userList);
-                Log.i(TAG, "doInBackground: " + username);
+                //Log.i(TAG, "doInBackground: " + username);
+
 
                 return null;
             }

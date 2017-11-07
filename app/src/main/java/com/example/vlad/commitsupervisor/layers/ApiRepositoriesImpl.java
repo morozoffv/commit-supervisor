@@ -63,7 +63,6 @@ public class ApiRepositoriesImpl implements ApiRepositories {
     @NonNull
     @Override
     public List<Commit> getCommits(@NonNull String repoName, @NonNull User user) {
-        Network network = new NetworkImpl();
         List<Commit> commits = new ArrayList<>();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
         Date date = new Date();

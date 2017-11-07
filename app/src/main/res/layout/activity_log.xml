@@ -6,22 +6,34 @@
     android:layout_height="match_parent"
     tools:context="com.example.vlad.commitsupervisor.LogActivity">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="196dp"
+        app:layout_constraintRight_toRightOf="@+id/my_recycler_view"
+        app:layout_constraintTop_toTopOf="@+id/my_recycler_view"
+        app:layout_constraintBottom_toBottomOf="@+id/my_recycler_view"
+        app:layout_constraintLeft_toLeftOf="@+id/my_recycler_view"
+        app:layout_constraintHorizontal_bias="0.501" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_recycler_view"
-        android:scrollbars="vertical"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
-        tools:layout_constraintLeft_creator="1"
         android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
 
 </android.support.constraint.ConstraintLayout>

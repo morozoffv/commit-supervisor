@@ -1,5 +1,7 @@
 package com.example.vlad.commitsupervisor.layers;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -10,6 +12,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -24,6 +29,13 @@ public class NetworkImpl implements Network {
     private static final String REQUEST_METHOD = "GET";
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
+    private AssetManager assetManager;
+    private String accessToken;
+
+    public NetworkImpl(AssetManager assetManager) {
+        this.assetManager = assetManager;
+        accessToken = getAccessToken();
+    }
 
     @Nullable
     @Override
@@ -55,8 +67,7 @@ public class NetworkImpl implements Network {
 
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Authorization", "Basic bW9yb3pvZmZ2OjNrdTV4cWR1");
-
+            connection.setRequestProperty("Authorization", accessToken);
             connection.setRequestMethod(REQUEST_METHOD);
             connection.setConnectTimeout(CONNECTION_TIMEOUT);
             connection.setReadTimeout(READ_TIMEOUT);
@@ -82,5 +93,15 @@ public class NetworkImpl implements Network {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String getAccessToken() {
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(assetManager.open("access_token")))) {
+            return br.readLine();
+        } catch (IOException x) {
+            System.err.format("IOException: %s%n", x);
+        }
+        return null;
     }
 }

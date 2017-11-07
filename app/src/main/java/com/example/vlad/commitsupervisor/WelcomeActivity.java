@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,8 @@ import android.widget.Toast;
 
 import com.example.vlad.commitsupervisor.uiutils.Views;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Date;
 
@@ -102,6 +105,9 @@ public class WelcomeActivity extends AppCompatActivity {
             if (!(searchEdit.getText().toString().trim().equals(currentInput)) || autocompleteUserList == null) { //if current input is the same, that upload right now, then upload it until input wasn't change
                 return;
             }
+
+
+
             autocompleteAdapter = new AutoCompleteAdapter(autocompleteUserList);
             autocompleteRecyclerView.setAdapter(autocompleteAdapter);
             Log.i(TAG, "onReceive: " + currentInput);
@@ -120,6 +126,16 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     };
 
+    final private BroadcastReceiver blankFieldBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            autocompleteAdapter = new AutoCompleteAdapter(Collections.<User>emptyList());
+            autocompleteRecyclerView.setAdapter(autocompleteAdapter);
+        }
+    };
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +144,10 @@ public class WelcomeActivity extends AppCompatActivity {
         IntentFilter autocompleteFilter = new IntentFilter();
         autocompleteFilter.addAction(CommitSupervisorApp.ACTION_USERS_RECEIVED);
         this.registerReceiver(autocompleteBroadcastReceiver, autocompleteFilter);
+
+        IntentFilter blankFieldFilter = new IntentFilter();
+        blankFieldFilter.addAction(CommitSupervisorApp.ACTION_BLANK_SEARCH);
+        this.registerReceiver(blankFieldBroadcastReceiver, blankFieldFilter);
 
         if (savedInstanceState != null) {
             isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
@@ -196,7 +216,13 @@ public class WelcomeActivity extends AppCompatActivity {
 
             Timer timer = new Timer();
             @Override
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(Editable s)
+            {
+                if(searchEdit.getText().toString().trim().equals("")) {
+                    Intent intent = new Intent(CommitSupervisorApp.ACTION_BLANK_SEARCH);
+                    getCommitSupervisorApp().sendBroadcast(intent);
+                }
+
                 timer.cancel();
                 timer = new Timer();
                 timer.schedule(new TimerTask() {
@@ -309,5 +335,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         this.unregisterReceiver(autocompleteBroadcastReceiver);
+        this.unregisterReceiver(blankFieldBroadcastReceiver);
     }
 }

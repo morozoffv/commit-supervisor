@@ -21,7 +21,6 @@ import com.example.vlad.commitsupervisor.layers.SearchServiceImpl;
 public class CommitSupervisorApp extends Application implements ApplicationCore {
 
     @Nullable private SearchResult result;
-    private Network network = new NetworkImpl();
 
     BroadcastSender broadcastSender = new BroadcastSender() {
         @Override
@@ -30,23 +29,28 @@ public class CommitSupervisorApp extends Application implements ApplicationCore 
         }
     };
 
+    ApiEventsImpl apiEvents;
+    ApiRepositoriesImpl apiRepositories;
+    ApiUsersImpl apiUsers;
 
-    ApiEventsImpl apiEvents = new ApiEventsImpl(network);
-    ApiRepositoriesImpl apiRepositories = new ApiRepositoriesImpl(network);
-    ApiUsersImpl apiUsers = new ApiUsersImpl(network);
-
-    SearchService searchService = new SearchServiceImpl(apiEvents, apiRepositories, apiUsers, broadcastSender);
+    SearchService searchService;
 
 
     final public static String ACTION_SEARCH_COMPLETED = "commitsupervisor.SEARCH_COMPLETED";
     final public static String ACTION_SEARCH_ERROR = "commitsupervisor.SEARCH_ERROR";
     final public static String ACTION_USERS_RECEIVED = "commitsupervisor.USERS_RECEIVED";
     //final public static String ACTION_AUTOCOMPLETE_USER_CLICKED = "commitsupervisor.AUTOCOMPLETE_USER_CLICKED";
+    final public static String ACTION_BLANK_SEARCH = "commitsupervisor.ACTION_BLANK_SEARCH";
 
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Network network = new NetworkImpl(getAssets());
+        apiEvents = new ApiEventsImpl(network);
+        apiRepositories = new ApiRepositoriesImpl(network);
+        apiUsers = new ApiUsersImpl(network);
+        searchService = new SearchServiceImpl(apiEvents, apiRepositories, apiUsers, broadcastSender);
 
     }
 

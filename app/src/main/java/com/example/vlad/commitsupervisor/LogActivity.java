@@ -1,17 +1,22 @@
 package com.example.vlad.commitsupervisor;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.vlad.commitsupervisor.events.Event;
 import com.example.vlad.commitsupervisor.events.PushEvent;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,10 +64,11 @@ public class LogActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+
+
         //separators
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayout.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
-
 
     }
 
@@ -85,4 +91,5 @@ public class LogActivity extends AppCompatActivity {
         searchBroadcastReceiver.onUnregister(this);
 
     }
+
 }
