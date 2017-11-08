@@ -120,18 +120,14 @@ public class SearchServiceImpl implements SearchService {
                 intentUser.putExtra("users", userList);
                 intentUser.putExtra("input", username);
                 broadcastSender.sendBroadcast(intentUser);
-
-
             }
 
             @Override
             protected Void doInBackground(String... params) {
-                List<User> userList = apiUsers.getSearchUsers(username, 1000);
+                List<User> userList = apiUsers.getSearchUsers(username, 10);
                 SearchServiceImpl.this.userList.clear();
                 SearchServiceImpl.this.userList.addAll(userList);
                 //Log.i(TAG, "doInBackground: " + username);
-
-
                 return null;
             }
         };

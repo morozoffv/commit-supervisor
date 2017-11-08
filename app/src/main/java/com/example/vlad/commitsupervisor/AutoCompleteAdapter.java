@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +35,8 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textView;
-        public ImageView avatar;
+        public FrameLayout avatar;
+        public ImageView avatarImage;
         //public ConstraintLayout itemLayout;
 
         public int position;
@@ -42,7 +44,8 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
         public ViewHolder(ConstraintLayout v) {
             super(v); //itemView = v;
             textView = (TextView) v.findViewById(R.id.autocompletion_text);
-            avatar = (ImageView) v.findViewById(R.id.autocompletion_avatar);
+            avatar = (FrameLayout) v.findViewById(R.id.autocompletion_avatar);
+            avatarImage = (ImageView) v.findViewById(R.id.avatar);
         }
     }
 
@@ -70,7 +73,7 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                holder.avatar.setImageDrawable(avatarDrawable);
+                holder.avatarImage.setImageDrawable(avatarDrawable);
             }
         }.execute();
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -96,8 +99,7 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
         Drawable d = null;
         try {
             InputStream is = (InputStream) new URL(url).getContent();
-             d = Drawable.createFromStream(is, "src name");
-
+            d = Drawable.createFromStream(is, null);
             return d;
         } catch (Exception e) {
             return d;
