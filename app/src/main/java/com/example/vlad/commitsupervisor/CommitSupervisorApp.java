@@ -13,6 +13,8 @@ import com.example.vlad.commitsupervisor.layers.Network;
 import com.example.vlad.commitsupervisor.layers.NetworkImpl;
 import com.example.vlad.commitsupervisor.layers.SearchService;
 import com.example.vlad.commitsupervisor.layers.SearchServiceImpl;
+import com.example.vlad.commitsupervisor.layers.StorageService;
+import com.example.vlad.commitsupervisor.layers.StorageServiceImpl;
 
 /**
  * Created by vlad on 03/10/2017.
@@ -29,11 +31,12 @@ public class CommitSupervisorApp extends Application implements ApplicationCore 
         }
     };
 
-    ApiEventsImpl apiEvents;
-    ApiRepositoriesImpl apiRepositories;
-    ApiUsersImpl apiUsers;
+    private ApiEventsImpl apiEvents;
+    private ApiRepositoriesImpl apiRepositories;
+    private ApiUsersImpl apiUsers;
 
-    SearchService searchService;
+    private SearchService searchService;
+    private StorageService storageService;
 
 
     final public static String ACTION_SEARCH_COMPLETED = "commitsupervisor.SEARCH_COMPLETED";
@@ -51,13 +54,19 @@ public class CommitSupervisorApp extends Application implements ApplicationCore 
         apiRepositories = new ApiRepositoriesImpl(network);
         apiUsers = new ApiUsersImpl(network);
         searchService = new SearchServiceImpl(apiEvents, apiRepositories, apiUsers, broadcastSender);
+        storageService = new StorageServiceImpl();
 
     }
 
     @NonNull
     @Override
     public SearchService getSearchService() {
-
         return searchService;
+    }
+
+    @NonNull
+    @Override
+    public StorageService getStorageService() {
+        return storageService;
     }
 }

@@ -11,4 +11,7 @@ public interface ApplicationCore {
     @NonNull
     SearchService getSearchService();
 
+    @NonNull
+    StorageService getStorageService();
+
 }

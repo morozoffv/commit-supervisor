@@ -1,5 +1,7 @@
 package com.example.vlad.commitsupervisor.layers;
 
+import android.content.Context;
+
 import com.example.vlad.commitsupervisor.User;
 
 import java.util.List;
@@ -10,9 +12,7 @@ import java.util.List;
 
 public interface StorageService {
 
-    List<String> getUsernames();
-
-    List<User> getStoredUsers();
+    List<User> getStoredUsers(Context context);
 
     void saveUser(User user);
 

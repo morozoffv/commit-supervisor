@@ -1,6 +1,5 @@
 package com.example.vlad.commitsupervisor;
 
-import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.constraint.ConstraintLayout;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -25,27 +23,26 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
 
     private List<User> users;
     private OnItemClickListener itemClickListener;
-    Drawable avatarDrawable;
+    private Drawable avatarDrawable;
 
 
-    public interface OnItemClickListener {
-        void onItemClick(View v, int position);
-    }
+//    public interface OnItemClickListener {
+//        void onItemClick(View v, int position);
+//    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textView;
         public FrameLayout avatar;
         public ImageView avatarImage;
-        //public ConstraintLayout itemLayout;
-
-        public int position;
+        public View backgroundView;
 
         public ViewHolder(ConstraintLayout v) {
             super(v); //itemView = v;
             textView = (TextView) v.findViewById(R.id.autocompletion_text);
             avatar = (FrameLayout) v.findViewById(R.id.autocompletion_avatar);
             avatarImage = (ImageView) v.findViewById(R.id.avatar);
+            backgroundView = v.findViewById(R.id.autocompletion_item);
         }
     }
 
@@ -76,7 +73,7 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
                 holder.avatarImage.setImageDrawable(avatarDrawable);
             }
         }.execute();
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.backgroundView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (itemClickListener != null) {

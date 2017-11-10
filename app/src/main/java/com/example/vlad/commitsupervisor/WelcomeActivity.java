@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.support.v4.content.res.ResourcesCompat;
@@ -65,9 +66,13 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private List<User> autocompleteUserList;
 
+
+
     private RecyclerView autocompleteRecyclerView;
     private AutoCompleteAdapter autocompleteAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+
+    private RecyclerView searchHistoryRecyclerView;
+    private SearchHistoryAdapter searchHistoryAdapter;
 
 //    final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
 //        @Override
@@ -92,7 +97,7 @@ public class WelcomeActivity extends AppCompatActivity {
     final private BroadcastReceiver autocompleteBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (!intent.getAction().equals(CommitSupervisorApp.ACTION_USERS_RECEIVED)) {
+            if (!intent.getAction().equals(CommitSupervisorApp.ACTION_USERS_RECEIVED)) { //TODO: if i receive broadcast with this action, it doesn't mean that it already equals to that action?
                 return;
             }
             Bundle bundle = intent.getExtras();
@@ -106,17 +111,16 @@ public class WelcomeActivity extends AppCompatActivity {
                 return;
             }
 
-
-
             autocompleteAdapter = new AutoCompleteAdapter(autocompleteUserList);
             autocompleteRecyclerView.setAdapter(autocompleteAdapter);
             Log.i(TAG, "onReceive: " + currentInput);
-            autocompleteAdapter.setOnItemClickListener(new AutoCompleteAdapter.OnItemClickListener() {
+            autocompleteAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View v, int position) {
                     isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
+                    getCommitSupervisorApp().getStorageService().saveUser(autocompleteUserList.get(position));
                     Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
                     intentActivity.putExtra("username", autocompleteUserList.get(position).getLogin());
                     startActivity(intentActivity);
@@ -126,13 +130,16 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     };
 
-    final private BroadcastReceiver blankFieldBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            autocompleteAdapter = new AutoCompleteAdapter(Collections.<User>emptyList());
-            autocompleteRecyclerView.setAdapter(autocompleteAdapter);
-        }
-    };
+//    final private BroadcastReceiver blankFieldBroadcastReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//
+//
+//
+//
+//            Log.i("DEBUG", "blankFieldBroadcastReceiver");
+//        }
+//    };
 
 
 
@@ -140,14 +147,13 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         IntentFilter autocompleteFilter = new IntentFilter();
         autocompleteFilter.addAction(CommitSupervisorApp.ACTION_USERS_RECEIVED);
         this.registerReceiver(autocompleteBroadcastReceiver, autocompleteFilter);
 
         IntentFilter blankFieldFilter = new IntentFilter();
         blankFieldFilter.addAction(CommitSupervisorApp.ACTION_BLANK_SEARCH);
-        this.registerReceiver(blankFieldBroadcastReceiver, blankFieldFilter);
+//        this.registerReceiver(blankFieldBroadcastReceiver, blankFieldFilter);
 
         if (savedInstanceState != null) {
             isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
@@ -156,6 +162,8 @@ public class WelcomeActivity extends AppCompatActivity {
         initViews();
 
         changeScreenState();
+
+
     }
 
     private CommitSupervisorApp getCommitSupervisorApp() {
@@ -187,23 +195,35 @@ public class WelcomeActivity extends AppCompatActivity {
         dimmer = findViewById(R.id.dimmer);
         titleText = (TextView) findViewById(R.id.text_title);
 
-        autocompleteRecyclerView = (RecyclerView) findViewById(R.id.autocomplete_recycler_view);
-        layoutManager = new LinearLayoutManager(this);
-        autocompleteRecyclerView.setLayoutManager(layoutManager);
+        autocompleteRecyclerView = (RecyclerView) findViewById(R.id.autocomplete_recycler_view); //TODO: refactor
+        RecyclerView.LayoutManager layoutManagerAutocomplete = new LinearLayoutManager(this);
+        autocompleteRecyclerView.setLayoutManager(layoutManagerAutocomplete);
+        DividerItemDecoration dividerAutocomplete = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
+        dividerAutocomplete.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
+        autocompleteRecyclerView.addItemDecoration(dividerAutocomplete);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
-        dividerItemDecoration.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
-        autocompleteRecyclerView.addItemDecoration(dividerItemDecoration);
+        searchHistoryRecyclerView = (RecyclerView) findViewById(R.id.search_history);
+        RecyclerView.LayoutManager layoutManagerSearchHistory = new LinearLayoutManager(this);
+        searchHistoryRecyclerView.setLayoutManager(layoutManagerSearchHistory);
+        DividerItemDecoration dividerSearchHistory = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
+        dividerSearchHistory.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
+        searchHistoryRecyclerView.addItemDecoration(dividerSearchHistory);
 
-        Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView);
+        SearchHistoryAdapter searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers(getApplicationContext())); //TODO: redo
+        searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
+
+
+        Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView, searchHistoryRecyclerView);
 
         fakeSearchField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { //TODO: remove listeners to the other method
                 isSearchActivated = true;
                 showKeyboard(searchEdit);
-                Views.setInvisible(fakeSearchField, titleText);
-                Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
+//                Views.setInvisible(fakeSearchField, titleText);
+//                Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
+                changeScreenState();
+
             }
         });
 
@@ -219,8 +239,14 @@ public class WelcomeActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s)
             {
                 if(searchEdit.getText().toString().trim().equals("")) {
-                    Intent intent = new Intent(CommitSupervisorApp.ACTION_BLANK_SEARCH);
-                    getCommitSupervisorApp().sendBroadcast(intent);
+//                    Intent intent = new Intent(CommitSupervisorApp.ACTION_BLANK_SEARCH);
+//                    getCommitSupervisorApp().sendBroadcast(intent);
+                    autocompleteAdapter = new AutoCompleteAdapter(Collections.<User>emptyList());
+                    autocompleteRecyclerView.setAdapter(autocompleteAdapter);
+                    Views.setVisible(searchHistoryRecyclerView);
+                }
+                else {
+                    Views.setInvisible(searchHistoryRecyclerView);
                 }
 
                 timer.cancel();
@@ -246,10 +272,10 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
-        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() { //after pressing on search button on keyboard
+        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {                     //after pressing on search button on keyboard
                     String username = searchEdit.getText().toString().trim();
                     if (isUserInputEmpty(username)) {
                         Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
@@ -258,12 +284,26 @@ public class WelcomeActivity extends AppCompatActivity {
                     isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
+
                     Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
                     intentActivity.putExtra("username", username);
                     startActivity(intentActivity);
                     return true;
                 }
                 return false;
+            }
+        });
+
+        searchHistoryAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                isSearchActivated = false;
+                hideKeyboard();
+                changeScreenState(true);
+
+                Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                intentActivity.putExtra("username", getCommitSupervisorApp().getStorageService().getStoredUsers(getApplicationContext()).get(position).getLogin()); //TODO: redo
+                startActivity(intentActivity);
             }
         });
 
@@ -301,10 +341,18 @@ public class WelcomeActivity extends AppCompatActivity {
         if (isSearchActivated) {
             Views.setInvisible(titleText, fakeSearchField);
             Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
+
+            if(!searchEdit.getText().toString().trim().equals("")) {
+                Views.setInvisible(searchHistoryRecyclerView);
+            }
+            else {
+                Views.setVisible(searchHistoryRecyclerView);
+            }
+
             hideKeyboard();
         }
         else {
-            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
+            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView, searchHistoryRecyclerView);
             Views.setVisible(titleText, fakeSearchField);
             hideKeyboard();
         }
@@ -321,7 +369,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (isSearchActivated) {
-            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
+            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView, searchHistoryRecyclerView);
             Views.setVisible(titleText, fakeSearchField);
             isSearchActivated = false;
         }
@@ -335,6 +383,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         this.unregisterReceiver(autocompleteBroadcastReceiver);
-        this.unregisterReceiver(blankFieldBroadcastReceiver);
+//        this.unregisterReceiver(blankFieldBroadcastReceiver);
     }
 }
