@@ -120,7 +120,9 @@ public class WelcomeActivity extends AppCompatActivity {
                     isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
-                    getCommitSupervisorApp().getStorageService().saveUser(autocompleteUserList.get(position));
+
+                    //getCommitSupervisorApp().getStorageService().saveUser(autocompleteUserList.get(position), getApplicationContext());
+
                     Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
                     intentActivity.putExtra("username", autocompleteUserList.get(position).getLogin());
                     startActivity(intentActivity);
@@ -170,6 +172,8 @@ public class WelcomeActivity extends AppCompatActivity {
         return (CommitSupervisorApp) getApplication();
     }
 
+
+
     private void showKeyboard(View v) {
         v.requestFocus();
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -209,7 +213,7 @@ public class WelcomeActivity extends AppCompatActivity {
         dividerSearchHistory.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
         searchHistoryRecyclerView.addItemDecoration(dividerSearchHistory);
 
-        SearchHistoryAdapter searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers(getApplicationContext())); //TODO: redo
+        SearchHistoryAdapter searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers());
         searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
 
 
@@ -284,7 +288,6 @@ public class WelcomeActivity extends AppCompatActivity {
                     isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
-
                     Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
                     intentActivity.putExtra("username", username);
                     startActivity(intentActivity);
@@ -302,7 +305,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 changeScreenState(true);
 
                 Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
-                intentActivity.putExtra("username", getCommitSupervisorApp().getStorageService().getStoredUsers(getApplicationContext()).get(position).getLogin()); //TODO: redo
+                intentActivity.putExtra("username", getCommitSupervisorApp().getStorageService().getStoredUsers().get(position).getLogin()); //TODO: redo
                 startActivity(intentActivity);
             }
         });
@@ -333,6 +336,8 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers());
+        searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
         changeScreenState();
     }
 

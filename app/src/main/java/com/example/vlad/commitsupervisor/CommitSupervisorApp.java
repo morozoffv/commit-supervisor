@@ -53,8 +53,9 @@ public class CommitSupervisorApp extends Application implements ApplicationCore 
         apiEvents = new ApiEventsImpl(network);
         apiRepositories = new ApiRepositoriesImpl(network);
         apiUsers = new ApiUsersImpl(network);
-        searchService = new SearchServiceImpl(apiEvents, apiRepositories, apiUsers, broadcastSender);
-        storageService = new StorageServiceImpl();
+        storageService = new StorageServiceImpl(getApplicationContext());
+        searchService = new SearchServiceImpl(apiEvents, apiRepositories, apiUsers, broadcastSender, storageService);
+
 
     }
 

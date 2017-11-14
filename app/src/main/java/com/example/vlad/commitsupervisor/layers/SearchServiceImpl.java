@@ -1,5 +1,7 @@
 package com.example.vlad.commitsupervisor.layers;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -37,27 +39,32 @@ public class SearchServiceImpl implements SearchService {
     private ApiUsers apiUsers;
     private SearchResult result;
     private BroadcastSender broadcastSender;
+    private StorageService storageService;
+
 
     private ArrayList<User> userList = new ArrayList<>();
 
-    public SearchServiceImpl(ApiEvents apiEvents, ApiRepositories apiRepositories, ApiUsers apiUsers, BroadcastSender broadcastSender) {
+    public SearchServiceImpl(ApiEvents apiEvents, ApiRepositories apiRepositories, ApiUsers apiUsers, BroadcastSender broadcastSender, StorageService storageService) {
         this.apiEvents = apiEvents;
         this.apiRepositories = apiRepositories;
         this.apiUsers = apiUsers;
         this.broadcastSender = broadcastSender;
+        this.storageService = storageService;
     }
 
 
     @Override
     public void fetchUserActivity(final String username, final Date date) {
 
-        JSONAsyncTask asyncTask = new JSONAsyncTask() {
+        @SuppressLint("StaticFieldLeak") JSONAsyncTask asyncTask = new JSONAsyncTask() {
             @Override
             protected Void doInBackground(String... params) {
 
                 result = new SearchResult();
 
                 final User user = apiUsers.getUser(username);
+
+                storageService.saveUser(user);
 
                 if (user == null) {
                     result.setSuccessful(false);
@@ -112,7 +119,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public void loadAutoCompletionsForUsername(final String username) {
 
-        AutoCompleteAsyncTask autoCompleteAsyncTask = new AutoCompleteAsyncTask() {
+        @SuppressLint("StaticFieldLeak") AutoCompleteAsyncTask autoCompleteAsyncTask = new AutoCompleteAsyncTask() {
             @Override
             protected void onPostExecute(Void aVoid) {
                 //Log.i(TAG, "onPostExecute: " + username);

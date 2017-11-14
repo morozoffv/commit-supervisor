@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface StorageService {
 
-    List<User> getStoredUsers(Context context);
+    List<User> getStoredUsers();
 
     void saveUser(User user);
 
