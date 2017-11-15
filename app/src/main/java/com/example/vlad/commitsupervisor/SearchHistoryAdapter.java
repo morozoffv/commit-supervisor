@@ -2,6 +2,7 @@ package com.example.vlad.commitsupervisor;
 
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ import java.util.List;
 public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdapter.ViewHolder>{
 
     private List<User> storedUsers = new ArrayList<>();
-    OnItemClickListener itemClickListener;
+    private OnItemClickListener itemClickListener;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private LinearLayout linearLayout;
@@ -44,6 +45,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("DEBUG", "onClick: SearchHistoryAdapter");
                 if (itemClickListener != null) {
                     itemClickListener.onItemClick(v, holder.getAdapterPosition());
                 }
@@ -52,13 +54,19 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
 
     }
 
-    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
 
     @Override
     public int getItemCount() {
         return storedUsers.size();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
+
+    public void setStoredUsers(List <User> storedUsers) { //TODO: if i just set list in adapter, without 'new', adapter didn't refresh
+        this.storedUsers = storedUsers;
+
     }
 
 

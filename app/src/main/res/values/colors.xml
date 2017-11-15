@@ -8,7 +8,8 @@
 
     <color name="searchScreenWindowBackground">#56CCF2</color>
     <color name="searchInputHintColor">#A4A4A4</color>
-    <color name="iconColor">#999999</color>
+    <color name="searchFieldIconsColor">#999999</color>
+    <color name="searchHistoryIconColor">#4E4E4E</color>
 
     <color name="white_smoke">#F3F3F3</color>
     <color name="dividerColor">#CFCFCF</color>

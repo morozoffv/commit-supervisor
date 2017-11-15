@@ -22,7 +22,7 @@
         android:background="@android:color/background_light"
         android:drawableLeft="@drawable/ic_search_black_24dp"
         android:drawablePadding="17dp"
-        android:drawableTint="@color/iconColor"
+        android:drawableTint="@color/searchFieldIconsColor"
         android:elevation="3dp"
         android:gravity="center_vertical"
         android:hint="@string/hintSearchTextEdit"
@@ -118,20 +118,22 @@
         tools:layout_editor_absoluteX="54dp" />
 
     <ImageView
-
         android:id="@+id/back_button_image"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
+        android:contentDescription="@string/back_button_image"
         android:elevation="4dp"
         android:scaleType="center"
         android:src="@drawable/ic_arrow_back_black_24dp"
-        android:tint="@color/iconColor"
+        android:tint="@color/searchFieldIconsColor"
         app:layout_constraintBottom_toBottomOf="@+id/search_field"
         app:layout_constraintLeft_toLeftOf="@+id/search_field"
         app:layout_constraintTop_toTopOf="@+id/search_field" />
+
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/autocomplete_recycler_view"
@@ -160,6 +162,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="0dp"
         android:elevation="3dp"
+        android:overScrollMode="never"
         app:layout_constraintBottom_toBottomOf="@+id/dimmer"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -168,6 +171,32 @@
         app:layout_constraintVertical_bias="0.0">
 
     </android.support.v7.widget.RecyclerView>
+
+    <ImageView
+        android:id="@+id/search_close_button_image"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/search_close_button_image"
+        android:elevation="4dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_close_black"
+        android:tint="@color/searchFieldIconsColor"
+        app:layout_constraintBottom_toBottomOf="@+id/search_field"
+        app:layout_constraintEnd_toEndOf="@+id/search_field"
+        app:layout_constraintTop_toTopOf="@+id/search_field" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:elevation="4dp"
+        android:stateListAnimator="@null"
+        android:background="@color/white_smoke"
+        app:layout_constraintBottom_toTopOf="@+id/search_history"
+        app:layout_constraintEnd_toEndOf="@+id/search_field"
+        app:layout_constraintStart_toStartOf="@+id/search_field" />
 
 
 </android.support.constraint.ConstraintLayout>

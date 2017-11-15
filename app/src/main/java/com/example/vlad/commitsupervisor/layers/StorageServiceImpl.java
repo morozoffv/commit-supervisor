@@ -3,18 +3,10 @@ package com.example.vlad.commitsupervisor.layers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-import android.support.v4.util.ArraySet;
-import android.support.v4.util.CircularArray;
-
-import com.example.vlad.commitsupervisor.CommitSupervisorApp;
 import com.example.vlad.commitsupervisor.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -51,17 +43,17 @@ public class StorageServiceImpl implements StorageService {
                 storedUsers.add(user);
             }
         }
-        //Set<User> usersSet = new ArraySet<>(storedUsers);
         return storedUsers;
     }
 
     @Override
     public void saveUser(User user) {
+        if (user == null) return;
         String rawUsers = getRawUsers();
         String parsedArr[] = parse();
         String userString = userToString(user);
         for (String s: parsedArr) {
-            if (s.equals(userString)) return;                           //does it possible that profile and avatar url will be changed and same user will be saved both times?
+            if (s.equals(userString)) return;                           //TODO: does it possible that profile and avatar url will be changed and same user will be saved both times?
         }
         SharedPreferences.Editor editor = searchHistory.edit();
 

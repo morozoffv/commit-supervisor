@@ -56,6 +56,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private EditText searchEdit;
     private ImageView backButtonImage;
+    private ImageView searchCloseButtonImage;
     private View searchField;
 
     private TextView fakeSearchField;
@@ -73,26 +74,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private RecyclerView searchHistoryRecyclerView;
     private SearchHistoryAdapter searchHistoryAdapter;
-
-//    final private SearchBroadcastReceiver searchBroadcastReceiver = new SearchBroadcastReceiver() {
-//        @Override
-//        public void onCompleted(Bundle bundle) {
-//            isSearchActivated = false;
-//            changeScreenState(true);
-//            Toast.makeText(WelcomeActivity.this, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show();
-//            Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
-//            startActivity(intentActivity);
-//        }
-//
-//        @Override
-//        public void onError() {
-//            isSearchActivated = false;
-//            Toast.makeText(WelcomeActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-//            changeScreenState();
-//        }
-//
-//
-//    };
 
     final private BroadcastReceiver autocompleteBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -117,11 +98,12 @@ public class WelcomeActivity extends AppCompatActivity {
             autocompleteAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View v, int position) {
+
+                    toEmptySearchHistoryAdapter();
+
                     isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
-
-                    //getCommitSupervisorApp().getStorageService().saveUser(autocompleteUserList.get(position), getApplicationContext());
 
                     Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
                     intentActivity.putExtra("username", autocompleteUserList.get(position).getLogin());
@@ -131,19 +113,6 @@ public class WelcomeActivity extends AppCompatActivity {
             });
         }
     };
-
-//    final private BroadcastReceiver blankFieldBroadcastReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//
-//
-//
-//
-//            Log.i("DEBUG", "blankFieldBroadcastReceiver");
-//        }
-//    };
-
-
 
 
     @Override
@@ -155,7 +124,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
         IntentFilter blankFieldFilter = new IntentFilter();
         blankFieldFilter.addAction(CommitSupervisorApp.ACTION_BLANK_SEARCH);
-//        this.registerReceiver(blankFieldBroadcastReceiver, blankFieldFilter);
 
         if (savedInstanceState != null) {
             isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
@@ -193,6 +161,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         searchEdit = (EditText) findViewById(R.id.search_edit);
         backButtonImage = (ImageView) findViewById(R.id.back_button_image);
+        searchCloseButtonImage = (ImageView) findViewById(R.id.search_close_button_image);
         searchField = findViewById(R.id.search_field);
 
         fakeSearchField = (TextView) findViewById(R.id.fake_search_field);
@@ -213,9 +182,8 @@ public class WelcomeActivity extends AppCompatActivity {
         dividerSearchHistory.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
         searchHistoryRecyclerView.addItemDecoration(dividerSearchHistory);
 
-        SearchHistoryAdapter searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers());
+        searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers());
         searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
-
 
         Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView, searchHistoryRecyclerView);
 
@@ -224,8 +192,6 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onClick(View v) { //TODO: remove listeners to the other method
                 isSearchActivated = true;
                 showKeyboard(searchEdit);
-//                Views.setInvisible(fakeSearchField, titleText);
-//                Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
                 changeScreenState();
 
             }
@@ -243,14 +209,14 @@ public class WelcomeActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s)
             {
                 if(searchEdit.getText().toString().trim().equals("")) {
-//                    Intent intent = new Intent(CommitSupervisorApp.ACTION_BLANK_SEARCH);
-//                    getCommitSupervisorApp().sendBroadcast(intent);
                     autocompleteAdapter = new AutoCompleteAdapter(Collections.<User>emptyList());
                     autocompleteRecyclerView.setAdapter(autocompleteAdapter);
                     Views.setVisible(searchHistoryRecyclerView);
+                    Views.setInvisible(searchCloseButtonImage);
                 }
                 else {
                     Views.setInvisible(searchHistoryRecyclerView);
+                    Views.setVisible(searchCloseButtonImage, autocompleteRecyclerView);
                 }
 
                 timer.cancel();
@@ -276,6 +242,17 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
+        searchCloseButtonImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeScreenState(true);
+                Views.setInvisible(searchCloseButtonImage, autocompleteRecyclerView);
+                Views.setVisible(searchHistoryRecyclerView);
+                hideKeyboard();
+
+            }
+        });
+
         searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -285,6 +262,9 @@ public class WelcomeActivity extends AppCompatActivity {
                         Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
                         return true;
                     }
+
+                    toEmptySearchHistoryAdapter();
+
                     isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
@@ -297,35 +277,9 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
-        searchHistoryAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                isSearchActivated = false;
-                hideKeyboard();
-                changeScreenState(true);
-
-                Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
-                intentActivity.putExtra("username", getCommitSupervisorApp().getStorageService().getStoredUsers().get(position).getLogin()); //TODO: redo
-                startActivity(intentActivity);
-            }
-        });
+        onItemClickListenerForSearchHistoryAdapter();
 
     }
-
-//    private boolean preFetchUserActivity(String username) {
-//
-//        if (isUserInputEmpty(username)) {
-//            Toast.makeText(WelcomeActivity.this, "Please, enter an username", Toast.LENGTH_SHORT).show();
-//            return true;
-//        }
-//        hideKeyboard();
-//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'", Locale.US);
-//        Date date = new Date();
-//        getCommitSupervisorApp().getSearchService().fetchUserActivity(username, date);
-//
-//        changeScreenState();
-//        return true;
-//    }
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -336,9 +290,42 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers());
-        searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
+        refreshSearchHistoryAdapter();
         changeScreenState();
+    }
+
+    private void refreshSearchHistoryAdapter() { //for invisibility of searchHistoryRecyclerView
+        if (searchHistoryAdapter != null) {
+            searchHistoryAdapter.setStoredUsers(getCommitSupervisorApp().getStorageService().getStoredUsers());
+            onItemClickListenerForSearchHistoryAdapter();
+            searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
+        }
+    }
+
+    private void toEmptySearchHistoryAdapter() {
+        searchHistoryAdapter.setStoredUsers(Collections.<User>emptyList());
+        searchHistoryAdapter.notifyDataSetChanged();
+        searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
+    }
+
+    private void onItemClickListenerForSearchHistoryAdapter() { //TODO: long func name
+        if (searchHistoryAdapter != null) {
+            searchHistoryAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
+
+                    toEmptySearchHistoryAdapter();
+
+                    isSearchActivated = false;
+                    hideKeyboard();
+                    changeScreenState(true);
+
+                    Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                    intentActivity.putExtra("username", getCommitSupervisorApp().getStorageService().getStoredUsers().get(position).getLogin()); //TODO: redo
+                    startActivity(intentActivity);
+                }
+            });
+        }
     }
 
     private void changeScreenState(boolean clearText) {
@@ -349,15 +336,17 @@ public class WelcomeActivity extends AppCompatActivity {
 
             if(!searchEdit.getText().toString().trim().equals("")) {
                 Views.setInvisible(searchHistoryRecyclerView);
+                Views.setVisible(searchCloseButtonImage);
             }
             else {
                 Views.setVisible(searchHistoryRecyclerView);
+                Views.setInvisible(searchCloseButtonImage);
             }
 
             hideKeyboard();
         }
         else {
-            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView, searchHistoryRecyclerView);
+            Views.setInvisible(dimmer, searchField, backButtonImage, searchCloseButtonImage, searchEdit, autocompleteRecyclerView, searchHistoryRecyclerView);
             Views.setVisible(titleText, fakeSearchField);
             hideKeyboard();
         }
@@ -388,6 +377,5 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         this.unregisterReceiver(autocompleteBroadcastReceiver);
-//        this.unregisterReceiver(blankFieldBroadcastReceiver);
     }
 }

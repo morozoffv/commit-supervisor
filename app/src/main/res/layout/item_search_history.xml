@@ -5,7 +5,8 @@
     android:layout_height="48dp"
     android:layout_width="match_parent"
 
-    android:background="?attr/selectableItemBackground"
+
+    android:background="@android:color/background_light"
     android:id="@+id/search_history_layout">
 
     <TextView
@@ -15,8 +16,9 @@
         android:textSize="14sp"
         android:textColor="@color/autocompletionTextColor"
         android:gravity="left|center_vertical"
-        android:background="@android:color/background_light"
+        android:background="?attr/selectableItemBackground"
         android:ellipsize="end"
+        android:drawableTint="@color/searchHistoryIconColor"
         android:maxLines="1"
         android:drawableLeft="@drawable/ic_history"
         android:drawablePadding="33dp"

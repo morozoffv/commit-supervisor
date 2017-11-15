@@ -5,4 +5,6 @@
     <string name="searching_button">searching...</string>
     <string name="search_title">"Узнай\nкак работает"</string>
     <string name="hintSearchTextEdit">Login GitHub</string>
+    <string name="back_button_image">Back</string>
+    <string name="search_close_button_image">Close search</string>
 </resources>
