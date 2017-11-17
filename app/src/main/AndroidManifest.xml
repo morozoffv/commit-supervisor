@@ -16,8 +16,7 @@
         android:theme="@style/AppTheme.NoActionBar">
 
 
-        <activity android:name=".MainActivity"/>
-            <!--android:screenOrientation="portrait"-->
+        <!--android:screenOrientation="portrait"-->
 
         <activity android:name=".WelcomeActivity" android:windowSoftInputMode="adjustResize">
 

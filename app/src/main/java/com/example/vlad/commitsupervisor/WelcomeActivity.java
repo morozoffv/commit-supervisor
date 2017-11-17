@@ -54,16 +54,19 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private static final String TAG = "WelcomeActivity";
 
+    private boolean isSearchActivated; //2 states of a UI: default and with active searchEdit
+
     private EditText searchEdit;
     private ImageView backButtonImage;
     private ImageView searchCloseButtonImage;
     private View searchField;
+    private View searchDivider;
 
     private TextView fakeSearchField;
     private View dimmer;
     private TextView titleText;
 
-    private boolean isSearchActivated; //2 states of a UI: default and with active searchEdit
+
 
     private List<User> autocompleteUserList;
 
@@ -163,6 +166,8 @@ public class WelcomeActivity extends AppCompatActivity {
         backButtonImage = (ImageView) findViewById(R.id.back_button_image);
         searchCloseButtonImage = (ImageView) findViewById(R.id.search_close_button_image);
         searchField = findViewById(R.id.search_field);
+        searchDivider = findViewById(R.id.divider);
+
 
         fakeSearchField = (TextView) findViewById(R.id.fake_search_field);
         dimmer = findViewById(R.id.dimmer);
@@ -171,16 +176,16 @@ public class WelcomeActivity extends AppCompatActivity {
         autocompleteRecyclerView = (RecyclerView) findViewById(R.id.autocomplete_recycler_view); //TODO: refactor
         RecyclerView.LayoutManager layoutManagerAutocomplete = new LinearLayoutManager(this);
         autocompleteRecyclerView.setLayoutManager(layoutManagerAutocomplete);
-        DividerItemDecoration dividerAutocomplete = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
-        dividerAutocomplete.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
-        autocompleteRecyclerView.addItemDecoration(dividerAutocomplete);
+        //DividerItemDecoration dividerAutocomplete = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
+        //dividerAutocomplete.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
+        //autocompleteRecyclerView.addItemDecoration(dividerAutocomplete);
 
         searchHistoryRecyclerView = (RecyclerView) findViewById(R.id.search_history);
         RecyclerView.LayoutManager layoutManagerSearchHistory = new LinearLayoutManager(this);
         searchHistoryRecyclerView.setLayoutManager(layoutManagerSearchHistory);
-        DividerItemDecoration dividerSearchHistory = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
-        dividerSearchHistory.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
-        searchHistoryRecyclerView.addItemDecoration(dividerSearchHistory);
+//        DividerItemDecoration dividerSearchHistory = new DividerItemDecoration(autocompleteRecyclerView.getContext(), LinearLayout.VERTICAL);
+//        dividerSearchHistory.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.custom_divider, null));
+//        searchHistoryRecyclerView.addItemDecoration(dividerSearchHistory);
 
         searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers());
         searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
@@ -191,9 +196,9 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) { //TODO: remove listeners to the other method
                 isSearchActivated = true;
+
                 showKeyboard(searchEdit);
                 changeScreenState();
-
             }
         });
 

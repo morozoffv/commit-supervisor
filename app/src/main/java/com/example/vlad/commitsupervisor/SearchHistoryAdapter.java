@@ -22,20 +22,19 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
     private OnItemClickListener itemClickListener;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private LinearLayout linearLayout;
         private TextView textView;
 
 
-        public ViewHolder(LinearLayout linearLayout) {
-            super(linearLayout);
-            textView = (TextView) linearLayout.findViewById(R.id.search_history_text);
+        public ViewHolder(ConstraintLayout constraintLayout) {
+            super(constraintLayout);
+            textView = (TextView) constraintLayout.findViewById(R.id.search_history_text);
         }
     }
     public SearchHistoryAdapter(List<User> storedUsers) {   this.storedUsers = storedUsers;  }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LinearLayout v =  (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_history, parent, false);
+        ConstraintLayout v =  (ConstraintLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_history, parent, false);
         return new ViewHolder(v);
     }
 

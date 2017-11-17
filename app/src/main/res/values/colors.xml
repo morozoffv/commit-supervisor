@@ -15,4 +15,6 @@
     <color name="dividerColor">#CFCFCF</color>
     <color name="autocompletionTextColor">#0c0c0c</color>
 
+    <color name="scarlet">#EB5757</color>
+
 </resources>

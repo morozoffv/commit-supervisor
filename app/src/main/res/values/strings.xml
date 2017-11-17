@@ -7,4 +7,7 @@
     <string name="hintSearchTextEdit">Login GitHub</string>
     <string name="back_button_image">Back</string>
     <string name="search_close_button_image">Close search</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
