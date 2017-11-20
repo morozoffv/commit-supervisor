@@ -325,7 +325,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     hideKeyboard();
                     changeScreenState(true);
 
-                    Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                    Intent intentActivity = new Intent(WelcomeActivity.this, MainActivity.class);
                     intentActivity.putExtra("username", getCommitSupervisorApp().getStorageService().getStoredUsers().get(position).getLogin()); //TODO: redo
                     startActivity(intentActivity);
                 }
