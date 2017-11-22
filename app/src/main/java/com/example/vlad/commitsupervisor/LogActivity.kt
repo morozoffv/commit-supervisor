@@ -39,6 +39,7 @@ class LogActivity : AppCompatActivity() {
             events = commitSupervisorApp.searchService.searchResult!!.events
             adapter = JSONAdapter(events)
             recyclerView.adapter = adapter
+
         }
 
         override fun onError() {
@@ -88,9 +89,5 @@ class LogActivity : AppCompatActivity() {
 
     }
 
-}
-
-fun AppCompatActivity.printName() {
-    Log.i("DEBUG", this::class.java.simpleName)
 }
 

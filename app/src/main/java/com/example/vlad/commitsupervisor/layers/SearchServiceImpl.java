@@ -122,7 +122,6 @@ public class SearchServiceImpl implements SearchService {
         @SuppressLint("StaticFieldLeak") AutoCompleteAsyncTask autoCompleteAsyncTask = new AutoCompleteAsyncTask() {
             @Override
             protected void onPostExecute(Void aVoid) {
-                //Log.i(TAG, "onPostExecute: " + username);
                 Intent intentUser = new Intent(CommitSupervisorApp.ACTION_USERS_RECEIVED);
                 intentUser.putExtra("users", userList);
                 intentUser.putExtra("input", username);
@@ -134,69 +133,11 @@ public class SearchServiceImpl implements SearchService {
                 List<User> userList = apiUsers.getSearchUsers(username, 10);
                 SearchServiceImpl.this.userList.clear();
                 SearchServiceImpl.this.userList.addAll(userList);
-                //Log.i(TAG, "doInBackground: " + username);
                 return null;
             }
+
+
         };
-
         autoCompleteAsyncTask.execute();
-
-//
-//
-//        String json = "{\n" +
-//                "    \"login\": \"skgwazap\",\n" +
-//                "    \"id\": 6984712,\n" +
-//                "    \"avatar_url\": \"https://avatars3.githubusercontent.com/u/6984712?v=4\",\n" +
-//                "    \"gravatar_id\": \"\",\n" +
-//                "    \"url\": \"https://api.github.com/users/skgwazap\",\n" +
-//                "    \"html_url\": \"https://github.com/skgwazap\",\n" +
-//                "    \"followers_url\": \"https://api.github.com/users/skgwazap/followers\",\n" +
-//                "    \"following_url\": \"https://api.github.com/users/skgwazap/following{/other_user}\",\n" +
-//                "    \"gists_url\": \"https://api.github.com/users/skgwazap/gists{/gist_id}\",\n" +
-//                "    \"starred_url\": \"https://api.github.com/users/skgwazap/starred{/owner}{/repo}\",\n" +
-//                "    \"subscriptions_url\": \"https://api.github.com/users/skgwazap/subscriptions\",\n" +
-//                "    \"organizations_url\": \"https://api.github.com/users/skgwazap/orgs\",\n" +
-//                "    \"repos_url\": \"https://api.github.com/users/skgwazap/repos\",\n" +
-//                "    \"events_url\": \"https://api.github.com/users/skgwazap/events{/privacy}\",\n" +
-//                "    \"received_events_url\": \"https://api.github.com/users/skgwazap/received_events\",\n" +
-//                "    \"type\": \"User\",\n" +
-//                "    \"site_admin\": false,\n" +
-//                "    \"name\": \"Taras Kreknin\",\n" +
-//                "    \"company\": null,\n" +
-//                "    \"blog\": \"\",\n" +
-//                "    \"location\": null,\n" +
-//                "    \"email\": null,\n" +
-//                "    \"hireable\": null,\n" +
-//                "    \"bio\": null,\n" +
-//                "    \"public_repos\": 1,\n" +
-//                "    \"public_gists\": 0,\n" +
-//                "    \"followers\": 0,\n" +
-//                "    \"following\": 0,\n" +
-//                "    \"created_at\": \"2014-03-18T08:15:12Z\",\n" +
-//                "    \"updated_at\": \"2017-10-16T15:20:20Z\"\n" +
-//                "}";
-//        JSONObject jsonObject = null;
-//        try {
-//            jsonObject = new JSONObject(json);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        User user = UserParser.parse(jsonObject);
-//        User user2 = UserParser.parse(jsonObject);
-//        user2.setLogin("vlad");
-//
-//
-//        userList.add(user);
-//        userList.add(user);
-//        userList.add(user);
-//        userList.add(user);
-//        userList.add(user2);
-//
-//        Intent intentUser = new Intent(CommitSupervisorApp.ACTION_USERS_RECEIVED);
-//        intentUser.putExtra("users", userList);
-//        broadcastSender.sendBroadcast(intentUser);
-
-
     }
 }

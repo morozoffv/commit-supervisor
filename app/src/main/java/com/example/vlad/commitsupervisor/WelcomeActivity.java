@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -59,8 +60,9 @@ public class WelcomeActivity extends AppCompatActivity {
     private EditText searchEdit;
     private ImageView backButtonImage;
     private ImageView searchCloseButtonImage;
-    private View searchField;
-    private View searchDivider;
+    //private View searchField;
+    //private View searchDivider;
+    private ConstraintLayout searchLayout;
 
     private TextView fakeSearchField;
     private View dimmer;
@@ -165,8 +167,9 @@ public class WelcomeActivity extends AppCompatActivity {
         searchEdit = (EditText) findViewById(R.id.search_edit);
         backButtonImage = (ImageView) findViewById(R.id.back_button_image);
         searchCloseButtonImage = (ImageView) findViewById(R.id.search_close_button_image);
-        searchField = findViewById(R.id.search_field);
-        searchDivider = findViewById(R.id.divider);
+        //searchField = findViewById(R.id.search_field);
+        //searchDivider = findViewById(R.id.divider);
+        searchLayout = (ConstraintLayout) findViewById(R.id.search_layout);
 
 
         fakeSearchField = (TextView) findViewById(R.id.fake_search_field);
@@ -190,7 +193,7 @@ public class WelcomeActivity extends AppCompatActivity {
         searchHistoryAdapter = new SearchHistoryAdapter(getCommitSupervisorApp().getStorageService().getStoredUsers());
         searchHistoryRecyclerView.setAdapter(searchHistoryAdapter);
 
-        Views.setInvisible(dimmer, searchEdit, searchField, backButtonImage, autocompleteRecyclerView, searchHistoryRecyclerView);
+        Views.setInvisible(dimmer, searchLayout/*searchEdit, searchField, backButtonImage*/, autocompleteRecyclerView, searchHistoryRecyclerView);
 
         fakeSearchField.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,12 +339,13 @@ public class WelcomeActivity extends AppCompatActivity {
     private void changeScreenState(boolean clearText) {
 
         if (isSearchActivated) {
+
+            Views.setVisible(dimmer, searchLayout, autocompleteRecyclerView);
             Views.setInvisible(titleText, fakeSearchField);
-            Views.setVisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView);
 
             if(!searchEdit.getText().toString().trim().equals("")) {
                 Views.setInvisible(searchHistoryRecyclerView);
-                Views.setVisible(searchCloseButtonImage);
+                Views.setVisible(searchCloseButtonImage); //is not necessary because searchCloseButtonImage is already in searchLayout
             }
             else {
                 Views.setVisible(searchHistoryRecyclerView);
@@ -351,7 +355,7 @@ public class WelcomeActivity extends AppCompatActivity {
             hideKeyboard();
         }
         else {
-            Views.setInvisible(dimmer, searchField, backButtonImage, searchCloseButtonImage, searchEdit, autocompleteRecyclerView, searchHistoryRecyclerView);
+            Views.setInvisible(dimmer, searchLayout, autocompleteRecyclerView, searchHistoryRecyclerView);
             Views.setVisible(titleText, fakeSearchField);
             hideKeyboard();
         }
@@ -368,7 +372,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (isSearchActivated) {
-            Views.setInvisible(dimmer, searchField, backButtonImage, searchEdit, autocompleteRecyclerView, searchHistoryRecyclerView);
+            Views.setInvisible(dimmer, searchLayout, autocompleteRecyclerView, searchHistoryRecyclerView);
             Views.setVisible(titleText, fakeSearchField);
             isSearchActivated = false;
         }

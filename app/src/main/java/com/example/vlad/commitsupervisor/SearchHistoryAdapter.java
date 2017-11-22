@@ -63,7 +63,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
         this.itemClickListener = itemClickListener;
     }
 
-    public void setStoredUsers(List <User> storedUsers) { //TODO: if i just set list in adapter, without 'new', adapter didn't refresh
+    public void setStoredUsers(List <User> storedUsers) {
         this.storedUsers = storedUsers;
 
     }
