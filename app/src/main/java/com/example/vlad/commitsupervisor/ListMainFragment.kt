@@ -22,11 +22,13 @@ class ListMainFragment : Fragment() {
 //
 //    lateinit var interaction : Interaction
 
+    private lateinit var events : List<Event>
+
     private lateinit var eventsRecyclerView : RecyclerView
     private lateinit var eventsAdapter : JSONAdapter//TODO: create new adapter
     private lateinit var layoutManager: RecyclerView.LayoutManager
 
-    private lateinit var loginTextView: TextView
+
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -42,10 +44,12 @@ class ListMainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        eventsRecyclerView = view.findViewById(R.id.events_recycler_view) as RecyclerView
-//        eventsRecyclerView.setHasFixedSize(true)
-//        layoutManager = LinearLayoutManager(this.context) //?
-//        eventsRecyclerView.layoutManager = layoutManager
+        eventsRecyclerView = view.findViewById(R.id.events_recycler_view) as RecyclerView
+        eventsRecyclerView.setHasFixedSize(true)
+        layoutManager = LinearLayoutManager(this.context) //?
+        eventsRecyclerView.layoutManager = layoutManager
+
+
 //        eventsAdapter = JSONAdapter(interaction.searchResult!!.events)
 //        eventsRecyclerView.adapter = eventsAdapter
 //        loginTextView.text = interaction.searchResult!!.user.login
@@ -56,4 +60,10 @@ class ListMainFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
     }
-}// Required empty public constructor
+
+    fun searchCompleted(eventsList : List<Event>) {
+        events = eventsList     //TODO: how to make this.events = events
+        eventsAdapter = JSONAdapter(events) //TODO: do i need external field?
+        eventsRecyclerView.adapter = eventsAdapter
+    }
+}

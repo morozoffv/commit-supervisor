@@ -111,7 +111,8 @@ public class WelcomeActivity extends AppCompatActivity {
                     changeScreenState(true);
 
                     Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
-                    intentActivity.putExtra("username", autocompleteUserList.get(position).getLogin());
+
+                    intentActivity.putExtra("user", autocompleteUserList.get(position));
                     startActivity(intentActivity);
 
                 }
@@ -277,7 +278,11 @@ public class WelcomeActivity extends AppCompatActivity {
                     hideKeyboard();
                     changeScreenState(true);
                     Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
-                    intentActivity.putExtra("username", username);
+
+                    User user = new User();     //user that
+                    user.setLogin(username);
+
+                    intentActivity.putExtra("user", user);
                     startActivity(intentActivity);
                     return true;
                 }
@@ -329,7 +334,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     changeScreenState(true);
 
                     Intent intentActivity = new Intent(WelcomeActivity.this, MainActivity.class);
-                    intentActivity.putExtra("username", getCommitSupervisorApp().getStorageService().getStoredUsers().get(position).getLogin()); //TODO: redo
+                    intentActivity.putExtra("user", getCommitSupervisorApp().getStorageService().getStoredUsers().get(position)); //TODO: redo
                     startActivity(intentActivity);
                 }
             });

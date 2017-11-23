@@ -34,9 +34,9 @@
         android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:textSize="16sp"
         android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_avatar" />

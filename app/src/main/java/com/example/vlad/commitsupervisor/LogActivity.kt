@@ -79,7 +79,8 @@ class LogActivity : AppCompatActivity() {
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'", Locale.US)
         val date = Date()
-        commitSupervisorApp.searchService.fetchUserActivity(intent.getStringExtra("username"), date) //TODO: redo username type and date filtration
+        val user = intent.getSerializableExtra("user") as User
+        commitSupervisorApp.searchService.fetchUserActivity(user.login, date) //TODO: redo username type and date filtration
 
     }
 

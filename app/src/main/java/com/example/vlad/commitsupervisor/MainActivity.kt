@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.fragment_header_main.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : AppCompatActivity(), ListMainFragment.Interaction {
+class MainActivity : AppCompatActivity()/*, ListMainFragment.Interaction*/ {
 
     private val headerMainFragmentTag = HeaderMainFragment::class.java.simpleName
     private val listMainFragmentTag = ListMainFragment::class.java.simpleName
@@ -25,17 +25,14 @@ class MainActivity : AppCompatActivity(), ListMainFragment.Interaction {
     private val listMainFragment : ListMainFragment?
         get() = supportFragmentManager.findFragmentByTag(listMainFragmentTag) as? ListMainFragment
 
-    override var searchResult: SearchResult? = null //TODO: how to make it non-null?
+    var searchResult: SearchResult? = null //TODO: how to make it non-null?
 
     private val searchBroadcastReceiver = object : SearchBroadcastReceiver() {
         override fun onCompleted(bundle: Bundle) {
             Toast.makeText(this@MainActivity, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show()
             searchResult = commitSupervisorApp.searchService.searchResult!!
-            supportFragmentManager.beginTransaction()
-                    .detach(listMainFragment)
-                    .attach(listMainFragment)
-                    .commit()
             headerMainFragment?.searchCompleted(searchResult!!.user)
+            listMainFragment?.searchCompleted(searchResult!!.events)
         }
 
         override fun onError() {
@@ -58,8 +55,9 @@ class MainActivity : AppCompatActivity(), ListMainFragment.Interaction {
 
     fun initFragments() {
         val fragmentBundle = Bundle()
-        val user = User()
+        val user = intent.getSerializableExtra("user") as User
         fragmentBundle.putSerializable("user", user)
+        fragmentBundle.putInt("metrics", resources.displayMetrics.densityDpi)
         val headerMainFrag = HeaderMainFragment()
         val listMainFrag = ListMainFragment()
         headerMainFrag.arguments = fragmentBundle
@@ -75,7 +73,8 @@ class MainActivity : AppCompatActivity(), ListMainFragment.Interaction {
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'", Locale.US)
         val date = Date()
-        commitSupervisorApp.searchService.fetchUserActivity(intent.getStringExtra("username"), date) //TODO: redo username type and date filtration
+        val user = intent.getSerializableExtra("user") as User
+        commitSupervisorApp.searchService.fetchUserActivity(user.login, date) //TODO: redo username type and date filtration
 
     }
 
