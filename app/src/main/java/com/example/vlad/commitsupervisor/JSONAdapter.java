@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.example.vlad.commitsupervisor.events.Event;
 import com.example.vlad.commitsupervisor.events.PushEvent;
 
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -15,7 +16,7 @@ import java.util.List;
  * Created by vlad on 05/10/2017.
  */
 
-public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> {
+public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.ViewHolder> implements Serializable {
 
     private List<Event> eventsList;
 

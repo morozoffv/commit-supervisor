@@ -1,8 +1,11 @@
 package com.example.vlad.commitsupervisor
 
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,12 +25,17 @@ import android.util.DisplayMetrics
 
 class HeaderMainFragment : Fragment() {
 
+    interface Interaction { //it's strange that interface have variable (but it's method)
+        val isSearching: Boolean
+    }
 
+    lateinit var interactor : Interaction
 
     private lateinit var progressBar : ProgressBar
     lateinit var user : User
     private lateinit var loginTextView: TextView
     private lateinit var avatar : ImageView
+    private lateinit var backButtonImageView : ImageView
     private var metrics : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,12 +48,14 @@ class HeaderMainFragment : Fragment() {
             throw RuntimeException("You must provide user!")
         }
     }
-    //setretaininstance
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        interactor = context as Interaction
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
-
         return inflater!!.inflate(R.layout.fragment_header_main, container, false)
     }
 
@@ -53,19 +63,54 @@ class HeaderMainFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressBar) as ProgressBar
         loginTextView = view.findViewById(R.id.login) as TextView
         avatar = view.findViewById(R.id.main_avatar) as ImageView
-
-        Picasso.with(context).load(R.drawable.ic_account_box_black_24dp).transform(CircularTransformation(30 * metrics)).into(avatar)
         loginTextView.text = user.login //set username from user input
+        if (!TextUtils.isEmpty(user.avatarUrl)) {
+            loadImage()
+        }
 
+        backButtonImageView = view.findViewById(R.id.back_button_image_main_fragment) as ImageView
+        backButtonImageView.setOnClickListener {
+            var intent = Intent(activity, WelcomeActivity::class.java)
+            intent.putExtra("isSearchActivated", true) //TODO: ?
+            activity.startActivity(intent)
+
+        }
+
+    }
+
+
+
+    private fun changeFragmentState() {
+        if (interactor.isSearching) {
+            Views.setVisible(progressBar)
+        }
+        else {
+            Views.setInvisible(progressBar)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeFragmentState()
     }
 
     fun searchCompleted(user: User) {
         Views.setInvisible(progressBar)
+        if (this.user.avatarUrl != (user.avatarUrl)) {
+            loadImage()
+        }
         this.user = user
-        loginTextView.text = user.login //reset username from "real" User object from service
-        //change user if it is not the same
 
-        Picasso.with(context).load(user.avatarUrl).placeholder(R.drawable.ic_account_box_black_24dp).transform(CircularTransformation(30 * metrics)).into(avatar)
+        loginTextView.text = user.login //reset username from "real" User object from service
     }
 
-}// Required empty public constructor
+    private fun loadImage() {
+        Picasso.with(context)
+                .load(user.avatarUrl)
+                .fit()
+                .placeholder(R.drawable.ic_person_40dp)
+                .transform(CircleTransform())
+                .into(avatar)
+    }
+
+}

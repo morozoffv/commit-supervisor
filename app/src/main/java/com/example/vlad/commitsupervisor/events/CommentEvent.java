@@ -2,11 +2,13 @@ package com.example.vlad.commitsupervisor.events;
 
 import com.example.vlad.commitsupervisor.parsers.EventTypes;
 
+import java.io.Serializable;
+
 /**
  * Created by vlad on 17/10/2017.
  */
 
-public class CommentEvent extends Event {
+public class CommentEvent extends Event implements Serializable {
 
     private String title;
     private String commentUrl;

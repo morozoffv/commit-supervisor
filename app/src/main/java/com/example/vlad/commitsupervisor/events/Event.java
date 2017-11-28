@@ -4,11 +4,13 @@ import com.example.vlad.commitsupervisor.parsers.EventTypes;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by vlad on 13/10/2017.
  */
 
-public class Event {
+public class Event implements Serializable {
 
     private String repoName;
     private String createdAt;

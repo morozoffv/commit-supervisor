@@ -12,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.example.vlad.commitsupervisor.events.Event
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ListMainFragment : Fragment() {
@@ -22,14 +24,11 @@ class ListMainFragment : Fragment() {
 //
 //    lateinit var interaction : Interaction
 
-    private lateinit var events : List<Event>
+    private var events = Collections.emptyList<Event>()
 
     private lateinit var eventsRecyclerView : RecyclerView
-    private lateinit var eventsAdapter : JSONAdapter//TODO: create new adapter
+    private lateinit var eventsAdapter : JSONAdapter
     private lateinit var layoutManager: RecyclerView.LayoutManager
-
-
-
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,12 +41,28 @@ class ListMainFragment : Fragment() {
 //        interaction = context as Interaction
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState!!.putSerializable("events", ArrayList(events))
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            events = savedInstanceState.getSerializable("events") as ArrayList<Event>
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         eventsRecyclerView = view.findViewById(R.id.events_recycler_view) as RecyclerView
         eventsRecyclerView.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this.context) //?
         eventsRecyclerView.layoutManager = layoutManager
+        eventsAdapter = JSONAdapter(events)
+        eventsAdapter.notifyDataSetChanged()
+        eventsRecyclerView.adapter = eventsAdapter
 
 
 //        eventsAdapter = JSONAdapter(interaction.searchResult!!.events)
@@ -61,7 +76,7 @@ class ListMainFragment : Fragment() {
         super.onDestroyView()
     }
 
-    fun searchCompleted(eventsList : List<Event>) {
+    fun searchCompleted(eventsList : ArrayList<Event>) {
         events = eventsList     //TODO: how to make this.events = events
         eventsAdapter = JSONAdapter(events) //TODO: do i need external field?
         eventsRecyclerView.adapter = eventsAdapter

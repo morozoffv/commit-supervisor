@@ -6,11 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by vlad on 13/10/2017.
  */
 
-public class PushEvent extends Event {
+public class PushEvent extends Event implements Serializable {
 
     private int commitNumber;
     private String branch;

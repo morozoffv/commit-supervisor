@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="149dp"
+    android:layout_height="match_parent"
     android:background="@color/searchScreenWindowBackground"
     tools:context="com.example.vlad.commitsupervisor.HeaderMainFragment"
     tools:layout_editor_absoluteY="25dp">
@@ -22,7 +22,9 @@
         android:id="@+id/main_avatar"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/ic_account_box_black_24dp"
+        android:src="@drawable/ic_person_40dp"
+        android:background="@drawable/avatar_background"
+        android:scaleType="center"
         android:layout_marginBottom="62dp"
         android:layout_marginTop="26dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -40,4 +42,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_avatar" />
+
+    <ImageView
+        android:id="@+id/back_button_image_main_fragment"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_arrow_back_black_24dp"
+        android:tint="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

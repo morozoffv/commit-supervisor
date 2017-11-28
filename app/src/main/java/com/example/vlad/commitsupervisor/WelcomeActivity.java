@@ -128,15 +128,21 @@ public class WelcomeActivity extends AppCompatActivity {
         autocompleteFilter.addAction(CommitSupervisorApp.ACTION_USERS_RECEIVED);
         this.registerReceiver(autocompleteBroadcastReceiver, autocompleteFilter);
 
-        IntentFilter blankFieldFilter = new IntentFilter();
-        blankFieldFilter.addAction(CommitSupervisorApp.ACTION_BLANK_SEARCH);
+//        IntentFilter blankFieldFilter = new IntentFilter();
+//        blankFieldFilter.addAction(CommitSupervisorApp.ACTION_BLANK_SEARCH);
 
         if (savedInstanceState != null) {
             isSearchActivated = savedInstanceState.getBoolean("isSearchActivated");
         }
+
         setContentView(R.layout.activity_welcome);
         initViews();
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            isSearchActivated = bundle.getBoolean("isSearchActivated"); //from MainActivity
+        }
         changeScreenState();
 
 
@@ -167,6 +173,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         searchEdit = (EditText) findViewById(R.id.search_edit);
         backButtonImage = (ImageView) findViewById(R.id.back_button_image);
+        searchCloseButtonImage = (ImageView) findViewById(R.id.search_close_button_image);
         searchCloseButtonImage = (ImageView) findViewById(R.id.search_close_button_image);
         //searchField = findViewById(R.id.search_field);
         //searchDivider = findViewById(R.id.divider);

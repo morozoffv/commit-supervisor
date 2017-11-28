@@ -15,6 +15,7 @@ import android.widget.Toast
 
 import com.example.vlad.commitsupervisor.events.Event
 import com.example.vlad.commitsupervisor.events.PushEvent
+import kotlinx.android.synthetic.main.fragment_header_main.*
 
 import java.io.InputStream
 import java.net.URL
@@ -33,6 +34,7 @@ class LogActivity : AppCompatActivity() {
     private var adapter: RecyclerView.Adapter<*>? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
 
+
     private val searchBroadcastReceiver = object : SearchBroadcastReceiver() {
         override fun onCompleted(bundle: Bundle) {
             Toast.makeText(this@LogActivity, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show()
@@ -49,6 +51,8 @@ class LogActivity : AppCompatActivity() {
 
     private val commitSupervisorApp: CommitSupervisorApp
         get() = application as CommitSupervisorApp
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +75,11 @@ class LogActivity : AppCompatActivity() {
         recyclerView.addItemDecoration(dividerItemDecoration)
         val functionRef = this::preFetchUserActivity
         events?.forEachIndexed { index, event ->  }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
 
     }
 
