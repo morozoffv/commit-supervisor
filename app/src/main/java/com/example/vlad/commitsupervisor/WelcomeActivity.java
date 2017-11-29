@@ -106,7 +106,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     toEmptySearchHistoryAdapter();
 
-                    isSearchActivated = false;
+                    //isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
 
@@ -281,7 +281,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     toEmptySearchHistoryAdapter();
 
-                    isSearchActivated = false;
+                    //isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
                     Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
@@ -336,7 +336,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     toEmptySearchHistoryAdapter();
 
-                    isSearchActivated = false;
+                    //isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
 

@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import com.example.vlad.commitsupervisor.events.Event
 import java.util.*
 import kotlin.collections.ArrayList
@@ -27,7 +25,7 @@ class ListMainFragment : Fragment() {
     private var events = Collections.emptyList<Event>()
 
     private lateinit var eventsRecyclerView : RecyclerView
-    private lateinit var eventsAdapter : JSONAdapter
+    private lateinit var eventsAdapter : EventsAdapter
     private lateinit var layoutManager: RecyclerView.LayoutManager
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -60,12 +58,12 @@ class ListMainFragment : Fragment() {
         eventsRecyclerView.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this.context) //?
         eventsRecyclerView.layoutManager = layoutManager
-        eventsAdapter = JSONAdapter(events)
+        eventsAdapter = EventsAdapter(events)
         eventsAdapter.notifyDataSetChanged()
         eventsRecyclerView.adapter = eventsAdapter
 
 
-//        eventsAdapter = JSONAdapter(interaction.searchResult!!.events)
+//        eventsAdapter = EventsAdapter(interaction.searchResult!!.events)
 //        eventsRecyclerView.adapter = eventsAdapter
 //        loginTextView.text = interaction.searchResult!!.user.login
 
@@ -76,9 +74,9 @@ class ListMainFragment : Fragment() {
         super.onDestroyView()
     }
 
-    fun searchCompleted(eventsList : ArrayList<Event>) {
-        events = eventsList     //TODO: how to make this.events = events
-        eventsAdapter = JSONAdapter(events) //TODO: do i need external field?
+    fun searchCompleted(events : ArrayList<Event>) {
+        this.events = events
+        eventsAdapter = EventsAdapter(events) //TODO: do i need external field?
         eventsRecyclerView.adapter = eventsAdapter
     }
 }

@@ -17,4 +17,6 @@
 
     <color name="scarlet">#EB5757</color>
 
+    <color name="descriptionTextColor">#696969</color>
+
 </resources>

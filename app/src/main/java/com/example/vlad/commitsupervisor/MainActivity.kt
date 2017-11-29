@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity(), HeaderMainFragment.Interaction {
         override fun onError() {
             isSearching = false
             Toast.makeText(this@MainActivity, "Error!", Toast.LENGTH_SHORT).show()
+            headerMainFragment?.searchCompleted()
+
         }
     }
 
@@ -98,11 +100,11 @@ class MainActivity : AppCompatActivity(), HeaderMainFragment.Interaction {
 
     }
 
-    override fun onBackPressed() {
-        var intent = Intent(this, WelcomeActivity::class.java)
-        intent.putExtra("isSearchActivated", true) //TODO: ?
-        this.startActivity(intent)
-    }
+//    override fun onBackPressed() {
+//        var intent = Intent(this, WelcomeActivity::class.java)
+//        intent.putExtra("isSearchActivated", true) //TODO: ?
+//        this.startActivity(intent)
+//    }
 
     override fun onDestroy() {
         super.onDestroy()

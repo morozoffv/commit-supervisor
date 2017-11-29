@@ -1,27 +1,16 @@
 package com.example.vlad.commitsupervisor
 
-import android.content.Intent
-import android.graphics.drawable.Drawable
-import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 
 import com.example.vlad.commitsupervisor.events.Event
-import com.example.vlad.commitsupervisor.events.PushEvent
-import kotlinx.android.synthetic.main.fragment_header_main.*
 
-import java.io.InputStream
-import java.net.URL
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
 
@@ -39,7 +28,7 @@ class LogActivity : AppCompatActivity() {
         override fun onCompleted(bundle: Bundle) {
             Toast.makeText(this@LogActivity, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show()
             events = commitSupervisorApp.searchService.searchResult!!.events
-            adapter = JSONAdapter(events)
+            adapter = EventsAdapter(events)
             recyclerView.adapter = adapter
 
         }

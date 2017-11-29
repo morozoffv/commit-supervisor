@@ -3,7 +3,9 @@ package com.example.vlad.commitsupervisor
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -29,10 +31,11 @@ class HeaderMainFragment : Fragment() {
         val isSearching: Boolean
     }
 
-    lateinit var interactor : Interaction
+    private lateinit var interactor : Interaction
 
+    private lateinit var layout : ConstraintLayout
     private lateinit var progressBar : ProgressBar
-    lateinit var user : User
+    private lateinit var user : User
     private lateinit var loginTextView: TextView
     private lateinit var avatar : ImageView
     private lateinit var backButtonImageView : ImageView
@@ -60,6 +63,7 @@ class HeaderMainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        layout = view.findViewById(R.id.header_layout) as ConstraintLayout
         progressBar = view.findViewById(R.id.progressBar) as ProgressBar
         loginTextView = view.findViewById(R.id.login) as TextView
         avatar = view.findViewById(R.id.main_avatar) as ImageView
@@ -68,17 +72,25 @@ class HeaderMainFragment : Fragment() {
             loadImage()
         }
 
+
+
         backButtonImageView = view.findViewById(R.id.back_button_image_main_fragment) as ImageView
         backButtonImageView.setOnClickListener {
             var intent = Intent(activity, WelcomeActivity::class.java)
             intent.putExtra("isSearchActivated", true) //TODO: ?
-            activity.startActivity(intent)
+            activity.finish()
+            //activity.startActivity(intent)
 
         }
 
+        layout.setOnClickListener {
+            if (!TextUtils.isEmpty(user.profileUrl)) {
+                var intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.profileUrl))
+                startActivity(intent)
+            }
+        }
+
     }
-
-
 
     private fun changeFragmentState() {
         if (interactor.isSearching) {
@@ -95,13 +107,16 @@ class HeaderMainFragment : Fragment() {
     }
 
     fun searchCompleted(user: User) {
-        Views.setInvisible(progressBar)
+        changeFragmentState()
         if (this.user.avatarUrl != (user.avatarUrl)) {
             loadImage()
         }
         this.user = user
-
         loginTextView.text = user.login //reset username from "real" User object from service
+    }
+
+    fun searchCompleted() {
+        changeFragmentState()
     }
 
     private fun loadImage() {
