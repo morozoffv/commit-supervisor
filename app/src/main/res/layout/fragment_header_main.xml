@@ -44,14 +44,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_avatar" />
 
+
     <ImageView
         android:id="@+id/back_button_image_main_fragment"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="32dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="center"
         android:src="@drawable/ic_arrow_back_black_24dp"
         android:tint="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

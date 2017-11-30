@@ -58,7 +58,7 @@ class ListMainFragment : Fragment() {
         eventsRecyclerView.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this.context) //?
         eventsRecyclerView.layoutManager = layoutManager
-        eventsAdapter = EventsAdapter(events)
+        eventsAdapter = EventsAdapter(events, activity) //TODO: warning
         eventsAdapter.notifyDataSetChanged()
         eventsRecyclerView.adapter = eventsAdapter
 
@@ -76,7 +76,7 @@ class ListMainFragment : Fragment() {
 
     fun searchCompleted(events : ArrayList<Event>) {
         this.events = events
-        eventsAdapter = EventsAdapter(events) //TODO: do i need external field?
+        eventsAdapter = EventsAdapter(events, activity) //TODO: do i need external field?
         eventsRecyclerView.adapter = eventsAdapter
     }
 }

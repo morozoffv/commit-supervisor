@@ -110,7 +110,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     hideKeyboard();
                     changeScreenState(true);
 
-                    Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                    Intent intentActivity = new Intent(WelcomeActivity.this, MainActivity.class);
 
                     intentActivity.putExtra("user", autocompleteUserList.get(position));
                     startActivity(intentActivity);
@@ -284,7 +284,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     //isSearchActivated = false;
                     hideKeyboard();
                     changeScreenState(true);
-                    Intent intentActivity = new Intent(WelcomeActivity.this, LogActivity.class);
+                    Intent intentActivity = new Intent(WelcomeActivity.this, MainActivity.class);
 
                     User user = new User();     //user that
                     user.setLogin(username);

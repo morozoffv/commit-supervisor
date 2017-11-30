@@ -27,7 +27,8 @@ class MainActivity : AppCompatActivity(), HeaderMainFragment.Interaction {
     private val listMainFragment : ListMainFragment?
         get() = supportFragmentManager.findFragmentByTag(listMainFragmentTag) as? ListMainFragment
 
-    var searchResult: SearchResult? = null //TODO: how to make it non-null?
+    private lateinit var searchResult: SearchResult //TODO: be careful, it might be null
+    //var searchResult: SearchResult? = null
 
     override var isSearching = false
 
@@ -36,8 +37,8 @@ class MainActivity : AppCompatActivity(), HeaderMainFragment.Interaction {
             isSearching = false
             Toast.makeText(this@MainActivity, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show()
             searchResult = commitSupervisorApp.searchService.searchResult!!
-            headerMainFragment?.searchCompleted(searchResult!!.user)
-            listMainFragment?.searchCompleted(ArrayList(searchResult!!.events))
+            headerMainFragment?.searchCompleted(searchResult.user)
+            listMainFragment?.searchCompleted(ArrayList(searchResult.events))
 
         }
 

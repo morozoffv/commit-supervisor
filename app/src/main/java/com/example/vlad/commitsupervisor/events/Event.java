@@ -16,11 +16,6 @@ public class Event implements Serializable {
     private String createdAt;
     private EventTypes type;
 
-//    public static final String COMMIT_COMMENT = "CommitCommentEvent";
-//    public static final String ISSUE_COMMENT = "IssueCommentEvent";
-//    public static final String PULL_REQUEST_COMMENT = "PullRequestReviewCommentEvent";
-//    public static final String PUSH_EVENT = "PushEvent";
-
     public Event(EventTypes type) {
         this.type = type;
     }

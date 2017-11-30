@@ -108,7 +108,8 @@ class HeaderMainFragment : Fragment() {
 
     fun searchCompleted(user: User) {
         changeFragmentState()
-        if (this.user.avatarUrl != (user.avatarUrl)) {
+        if (this.user.avatarUrl != user.avatarUrl) {
+            this.user = user
             loadImage()
         }
         this.user = user

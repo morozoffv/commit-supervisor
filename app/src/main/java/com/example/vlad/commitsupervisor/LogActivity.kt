@@ -28,7 +28,7 @@ class LogActivity : AppCompatActivity() {
         override fun onCompleted(bundle: Bundle) {
             Toast.makeText(this@LogActivity, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show()
             events = commitSupervisorApp.searchService.searchResult!!.events
-            adapter = EventsAdapter(events)
+            adapter = EventsAdapter(events, commitSupervisorApp)
             recyclerView.adapter = adapter
 
         }
