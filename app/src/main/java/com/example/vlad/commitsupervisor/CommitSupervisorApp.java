@@ -2,6 +2,8 @@ package com.example.vlad.commitsupervisor;
 
 import android.app.Application;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -15,6 +17,8 @@ import com.example.vlad.commitsupervisor.layers.SearchService;
 import com.example.vlad.commitsupervisor.layers.SearchServiceImpl;
 import com.example.vlad.commitsupervisor.layers.StorageService;
 import com.example.vlad.commitsupervisor.layers.StorageServiceImpl;
+
+import java.util.Locale;
 
 /**
  * Created by vlad on 03/10/2017.
@@ -55,7 +59,9 @@ public class CommitSupervisorApp extends Application implements ApplicationCore 
         storageService = new StorageServiceImpl(getApplicationContext());
         searchService = new SearchServiceImpl(apiEvents, apiRepositories, apiUsers, broadcastSender, storageService);
 
-
+//        Configuration configuration = new Configuration(Resources.getSystem().getConfiguration());
+//        configuration.setLocale(Locale.US);
+//        Resources.getSystem().updateConfiguration(configuration, null);
     }
 
     @NonNull

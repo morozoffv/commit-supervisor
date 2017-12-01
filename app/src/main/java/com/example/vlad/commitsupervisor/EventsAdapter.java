@@ -2,7 +2,9 @@ package com.example.vlad.commitsupervisor;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +17,16 @@ import com.example.vlad.commitsupervisor.events.PushEvent;
 import com.example.vlad.commitsupervisor.parsers.EventTypes;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import kotlin.NotImplementedError;
+
+import static android.text.format.DateUtils.DAY_IN_MILLIS;
+import static android.text.format.DateUtils.FORMAT_ABBREV_RELATIVE;
+import static android.text.format.DateUtils.HOUR_IN_MILLIS;
+import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
 
 
 /**
@@ -43,6 +52,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             description = (TextView) v.findViewById(R.id.description_text);
             subDescription = (TextView) v.findViewById(R.id.subdescription_text);
             time = (TextView) v.findViewById(R.id.time_text);
+            icon = (ImageView) v.findViewById(R.id.icon);
 
         }
     }
@@ -86,13 +96,49 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         Drawable branchIcon = context.getDrawable(R.drawable.icon_branch);
         holder.subDescription.setCompoundDrawablesWithIntrinsicBounds(branchIcon, null, null, null);
         holder.subDescription.setText(pushEvent.getBranch());
-        //holder.icon.setImageDrawable(context.getDrawable(R.drawable.icon_commit));
+        holder.icon.setImageDrawable(context.getDrawable(R.drawable.icon_commit));
+
+        SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        long milliseconds = 0;
+        try {
+            milliseconds = dateParser.parse(pushEvent.getCreatedAt()).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //long posix = milliseconds / 1000;
+        CharSequence temp = DateUtils.getRelativeTimeSpanString(milliseconds,System.currentTimeMillis(), DAY_IN_MILLIS, FORMAT_ABBREV_RELATIVE);
+        holder.time.setText(temp);
     }
 
     private void bindEvent(ViewHolder holder, CommentEvent commentEvent) {
         holder.header.setText(commentEvent.getRepoName());
         holder.description.setText(commentEvent.getComment());
-        //holder.subDescription.setText(commentEvent.);
+        holder.subDescription.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        switch (commentEvent.getType()) {
+            case CommitCommentEvent:
+                holder.subDescription.setText(R.string.commit_comment);
+                break;
+            case IssueCommentEvent:
+                holder.subDescription.setText(R.string.issue_comment);
+                break;
+            case PullRequestReviewCommentEvent:
+                holder.subDescription.setText(R.string.pull_request_comment);
+                break;
+        }
+        holder.icon.setImageDrawable(context.getDrawable(R.drawable.ic_icon_comment));
+
+        SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        long milliseconds = 0;
+        try {
+            milliseconds = dateParser.parse(commentEvent.getCreatedAt()).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //long posix = milliseconds / 1000;
+        CharSequence temp = DateUtils.getRelativeTimeSpanString(milliseconds,System.currentTimeMillis(), DAY_IN_MILLIS, FORMAT_ABBREV_RELATIVE);
+
+        holder.time.setText(temp);
+
 
     }
 
