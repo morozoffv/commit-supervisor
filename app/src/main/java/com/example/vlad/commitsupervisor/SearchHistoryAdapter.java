@@ -50,7 +50,6 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
                 }
             }
         });
-
     }
 
 

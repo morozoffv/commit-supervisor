@@ -3,8 +3,11 @@ package com.example.vlad.commitsupervisor;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +41,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private List<Event> eventsList;
     private Context context;
 
+    private OnItemClickListener itemClickListener;
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        private CardView cardView;
         private TextView header;
         private TextView description;
         private TextView subDescription;
@@ -48,6 +54,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
         public ViewHolder(View v) {
             super(v); //itemView = v;
+            cardView = (CardView) v.findViewById(R.id.event_item_card_view);
             header = (TextView) v.findViewById(R.id.header_text);
             description = (TextView) v.findViewById(R.id.description_text);
             subDescription = (TextView) v.findViewById(R.id.subdescription_text);
@@ -70,8 +77,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) { //if RecyclerView freezes during scrolling, that is because this method works slow
+    public void onBindViewHolder(ViewHolder holder, int position) {
         Event event = eventsList.get(position);
+
         if (event instanceof PushEvent) {
             bindEvent(holder, (PushEvent) event);
             return;
@@ -90,7 +98,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
 
-    private void bindEvent(ViewHolder holder, PushEvent pushEvent) {
+    private void bindEvent(final ViewHolder holder, PushEvent pushEvent) {
         holder.header.setText(pushEvent.getRepoName());
         holder.description.setText("Pushed " + pushEvent.getCommitNumber() + " commit(s)");
         Drawable branchIcon = context.getDrawable(R.drawable.icon_branch);
@@ -108,6 +116,15 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         //long posix = milliseconds / 1000;
         CharSequence temp = DateUtils.getRelativeTimeSpanString(milliseconds,System.currentTimeMillis(), DAY_IN_MILLIS, FORMAT_ABBREV_RELATIVE);
         holder.time.setText(temp);
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(v, holder.getAdapterPosition());
+                }
+            }
+        });
     }
 
     private void bindEvent(ViewHolder holder, CommentEvent commentEvent) {
@@ -140,6 +157,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         holder.time.setText(temp);
 
 
+    }
+
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
     }
 
 

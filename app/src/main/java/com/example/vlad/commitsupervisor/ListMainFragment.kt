@@ -2,14 +2,18 @@ package com.example.vlad.commitsupervisor
 
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.vlad.commitsupervisor.events.CommentEvent
 import com.example.vlad.commitsupervisor.events.Event
 import java.util.*
 import kotlin.collections.ArrayList
@@ -59,16 +63,16 @@ class ListMainFragment : Fragment() {
         eventsRecyclerView.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this.context) //?
         eventsRecyclerView.layoutManager = layoutManager
-        eventsAdapter = EventsAdapter(events, activity) //TODO: warning
+        eventsAdapter = EventsAdapter(events, activity) //TODO: warning, pass activity as context is bad practice
         eventsAdapter.notifyDataSetChanged()
         eventsRecyclerView.adapter = eventsAdapter
+
+
 
 
 //        eventsAdapter = EventsAdapter(interaction.searchResult!!.events)
 //        eventsRecyclerView.adapter = eventsAdapter
 //        loginTextView.text = interaction.searchResult!!.user.login
-
-
     }
 
     override fun onDestroyView() {
@@ -79,5 +83,16 @@ class ListMainFragment : Fragment() {
         this.events = events
         eventsAdapter = EventsAdapter(events, activity) //TODO: do i need external field?
         eventsRecyclerView.adapter = eventsAdapter
+
+        eventsAdapter.setOnItemClickListener(object: OnItemClickListener {
+            override fun onItemClick(v: View?, position: Int) {
+                Log.i("DEBUG", "event item" + position + "clicked")
+                if (events.get(position) is CommentEvent) {
+                    var commentEvent = events.get(position) as CommentEvent
+                    var intent = Intent(Intent.ACTION_VIEW, Uri.parse(commentEvent.commentUrl))
+                    startActivity(intent)
+                }
+            }
+        })
     }
 }

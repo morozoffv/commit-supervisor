@@ -40,7 +40,7 @@ public class ApiEventsImpl implements ApiEvents {
 
         List<Event> events = new ArrayList<>();
         JSONArray rawJson;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 1; i < 4; i++) { //1-3 pages
             try {
                 URL url = new URL("https://api.github.com/users/" + user.getLogin().trim() + "/events?page=" + i + "&per_page=100");
                 rawJson = network.getArrayFromUrl(url);

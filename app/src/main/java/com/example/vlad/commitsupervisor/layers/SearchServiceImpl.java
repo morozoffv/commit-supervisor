@@ -105,9 +105,7 @@ public class SearchServiceImpl implements SearchService {
                 broadcastSender.sendBroadcast(broadcastIntent);
 
             }
-
         };
-
         asyncTask.execute();
     }
 
