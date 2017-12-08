@@ -15,6 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.vlad.commitsupervisor.events.CommentEvent
 import com.example.vlad.commitsupervisor.events.Event
+import com.example.vlad.commitsupervisor.events.PushEvent
+import com.example.vlad.commitsupervisor.parsers.EventTypes
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -83,6 +85,13 @@ class ListMainFragment : Fragment() {
         this.events = events
         eventsAdapter = EventsAdapter(events, activity) //TODO: do i need external field?
         eventsRecyclerView.adapter = eventsAdapter
+        var event = PushEvent()
+        event.repoName = "ITEM"
+        event.branch = "1"
+        event.commitNumber = 4;
+        event.createdAt = "1"
+        events.add(0, event)
+        eventsAdapter.notifyDataSetChanged()
 
         eventsAdapter.setOnItemClickListener(object: OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {

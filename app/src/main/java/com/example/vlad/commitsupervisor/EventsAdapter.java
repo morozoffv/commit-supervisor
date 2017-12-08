@@ -22,6 +22,9 @@ import com.example.vlad.commitsupervisor.parsers.EventTypes;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import kotlin.NotImplementedError;
@@ -36,12 +39,14 @@ import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
  * Created by vlad on 05/10/2017.
  */
 
-public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> implements Serializable {
+public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Serializable {
 
     private List<Event> eventsList;
     private Context context;
 
     private OnItemClickListener itemClickListener;
+
+    private boolean isTodayEventExistsCreate = false;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -64,28 +69,91 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         }
     }
 
+    public static class SecondaryViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView text;
+
+        public SecondaryViewHolder(View v) {
+            super(v);
+            text = (TextView) v.findViewById(R.id.today_events_check);
+        }
+    }
+
     public EventsAdapter(List<Event> dataSet, Context context) {
         eventsList = dataSet;
+        List<Event> todayEvents = getTodayCheckedEvents(eventsList);
+        if (!todayEvents.isEmpty()) {
+            eventsList = todayEvents;
+        }
         this.context = context;
 
     }
 
+    private List<Event> getTodayCheckedEvents(List<Event> events) {     //TODO: right now i run through whole list, make a smart check
+        List<Event> todayEvents = new ArrayList<>();
+        for (Event event: events)
+        {
+            SimpleDateFormat created = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            SimpleDateFormat dayWithoutTime = new SimpleDateFormat("yyyy-MM-dd");
+            Date createdDate = null;
+            Date dayWithoutTimeDate = null;
+
+            try {
+                createdDate = created.parse(event.getCreatedAt());
+                dayWithoutTimeDate = dayWithoutTime.parse(dayWithoutTime.format(new Date()));
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+                //add date stubs
+            }
+
+            if (dayWithoutTimeDate.after(createdDate)) {
+                todayEvents.add(event);
+            }
+        }
+        if (!todayEvents.isEmpty()) {
+            isTodayEventExists = true;
+        }
+        return todayEvents;
+    }
+
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (isTodayEventExists) {
+            isTodayEventExists = false;
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_events_today_check, parent, false);
+            return new SecondaryViewHolder(v);
+        }
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+
+
         Event event = eventsList.get(position);
 
+        ((ViewHolder) holder).cardView.getChildAt(0).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(v, ((ViewHolder) holder).getAdapterPosition());
+                }
+            }
+        });
+
         if (event instanceof PushEvent) {
-            bindEvent(holder, (PushEvent) event);
+            bindEvent(((ViewHolder) holder), (PushEvent) event);
             return;
         }
         if (event instanceof CommentEvent) {
-            bindEvent(holder, (CommentEvent) event);
+            bindEvent(((ViewHolder) holder), (CommentEvent) event);
             return;
         }
         throw new NotImplementedError();
@@ -117,14 +185,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         CharSequence temp = DateUtils.getRelativeTimeSpanString(milliseconds,System.currentTimeMillis(), DAY_IN_MILLIS, FORMAT_ABBREV_RELATIVE);
         holder.time.setText(temp);
 
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    itemClickListener.onItemClick(v, holder.getAdapterPosition());
-                }
-            }
-        });
     }
 
     private void bindEvent(ViewHolder holder, CommentEvent commentEvent) {
@@ -155,6 +215,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         CharSequence temp = DateUtils.getRelativeTimeSpanString(milliseconds,System.currentTimeMillis(), DAY_IN_MILLIS, FORMAT_ABBREV_RELATIVE);
 
         holder.time.setText(temp);
+
+
 
 
     }

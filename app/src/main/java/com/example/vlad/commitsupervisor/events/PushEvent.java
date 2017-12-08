@@ -16,6 +16,7 @@ public class PushEvent extends Event implements Serializable {
 
     private int commitNumber;
     private String branch;
+    private String commmitListUrl;
 
     public PushEvent() {
         super(EventTypes.PushEvent);

@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardUseCompatPadding="true"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +25,9 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            >
 
             <ImageView
                 android:id="@+id/icon"
@@ -38,13 +41,13 @@
             <TextView
                 android:id="@+id/header_text"
                 android:layout_width="0dp"
-                android:layout_height="18dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="56dp"
                 android:layout_marginTop="8dp"
-                android:textColor="@android:color/black"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:textColor="@android:color/black"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@+id/time_text"
                 app:layout_constraintStart_toStartOf="parent"

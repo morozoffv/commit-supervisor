@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.vlad.commitsupervisor.events.Event
+import com.example.vlad.commitsupervisor.events.PushEvent
 import com.example.vlad.commitsupervisor.uiutils.Views
 import kotlinx.android.synthetic.main.fragment_header_main.*
 import java.text.SimpleDateFormat
@@ -38,7 +39,10 @@ class MainActivity : AppCompatActivity(), HeaderMainFragment.Interaction {
             Toast.makeText(this@MainActivity, "Success, loaded " + bundle.get("eventsCount") + " events", Toast.LENGTH_SHORT).show()
             searchResult = commitSupervisorApp.searchService.searchResult!!
             headerMainFragment?.searchCompleted(searchResult.user)
-            listMainFragment?.searchCompleted(ArrayList(searchResult.events))
+            var events = ArrayList(searchResult.events)
+
+            listMainFragment?.searchCompleted(events)
+
 
         }
 
