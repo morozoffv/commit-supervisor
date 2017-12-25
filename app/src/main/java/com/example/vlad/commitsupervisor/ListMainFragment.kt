@@ -85,13 +85,13 @@ class ListMainFragment : Fragment() {
         this.events = events
         eventsAdapter = EventsAdapter(events, activity) //TODO: do i need external field?
         eventsRecyclerView.adapter = eventsAdapter
-        var event = PushEvent()
-        event.repoName = "ITEM"
-        event.branch = "1"
-        event.commitNumber = 4;
-        event.createdAt = "1"
-        events.add(0, event)
-        eventsAdapter.notifyDataSetChanged()
+//        var event = PushEvent()
+//        event.repoName = "ITEM"
+//        event.branch = "1"
+//        event.commitNumber = 4;
+//        event.createdAt = "1"
+//        events.add(0, event)
+//        eventsAdapter.notifyDataSetChanged()
 
         eventsAdapter.setOnItemClickListener(object: OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {

@@ -46,9 +46,9 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private OnItemClickListener itemClickListener;
 
-    private boolean isTodayEventExistsCreate = false;
+    private boolean isTodayEventExists = false;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class MainViewHolder extends RecyclerView.ViewHolder {
 
         private CardView cardView;
         private TextView header;
@@ -57,7 +57,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         private TextView time;
         private ImageView icon;
 
-        public ViewHolder(View v) {
+        public MainViewHolder(View v) {
             super(v); //itemView = v;
             cardView = (CardView) v.findViewById(R.id.event_item_card_view);
             header = (TextView) v.findViewById(R.id.header_text);
@@ -75,7 +75,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         public SecondaryViewHolder(View v) {
             super(v);
-            text = (TextView) v.findViewById(R.id.today_events_check);
+            text = (TextView) v.findViewById(R.id.warning_text);
         }
     }
 
@@ -99,9 +99,8 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             Date dayWithoutTimeDate = null;
 
             try {
-                createdDate = created.parse(event.getCreatedAt());
+                createdDate = created.parse(event.getCreatedAt());                                  //if there will be ParseException, then dayWithoutTimeDate will still be null
                 dayWithoutTimeDate = dayWithoutTime.parse(dayWithoutTime.format(new Date()));
-
             } catch (ParseException e) {
                 e.printStackTrace();
                 //add date stubs
@@ -109,6 +108,9 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             if (dayWithoutTimeDate.after(createdDate)) {
                 todayEvents.add(event);
+            }
+            else {
+                return todayEvents;
             }
         }
         if (!todayEvents.isEmpty()) {
@@ -119,44 +121,67 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        if (isTodayEventExists) {
+            if (position == 0) {
+                return 0;
+            }
+            else {
+                return 1;
+            }
+        }
+        else {
+            return 1;
+        }
+
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (isTodayEventExists) {
-            isTodayEventExists = false;
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_events_today_check, parent, false);
-            return new SecondaryViewHolder(v);
+        View v;
+        switch(viewType) {
+            case 0:
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_events_today_check, parent, false);
+                return new SecondaryViewHolder(v);
+            case 1:
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event, parent, false);
+                return new MainViewHolder(v);
         }
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event, parent, false);
-        return new ViewHolder(v);
+        return null; //TODO: should i put a stub or just leave it as null?
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
 
+        switch(holder.getItemViewType()) {
 
-        Event event = eventsList.get(position);
+            case 0:
+                ((SecondaryViewHolder) holder).text.setText("Hey! I don't know what to write here, i will think about it later. Thank you.");
 
-        ((ViewHolder) holder).cardView.getChildAt(0).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    itemClickListener.onItemClick(v, ((ViewHolder) holder).getAdapterPosition());
+
+                break;
+            case 1:
+                Event event = eventsList.get(position);
+
+                ((MainViewHolder) holder).cardView.getChildAt(0).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (itemClickListener != null) {
+                            itemClickListener.onItemClick(v, ((MainViewHolder) holder).getAdapterPosition());
+                        }
+                    }
+                });
+
+                if (event instanceof PushEvent) {
+                    bindEvent(((MainViewHolder) holder), (PushEvent) event);
+                    return;
                 }
-            }
-        });
+                if (event instanceof CommentEvent) {
+                    bindEvent(((MainViewHolder) holder), (CommentEvent) event);
+                    return;
+                }
+                throw new NotImplementedError();
 
-        if (event instanceof PushEvent) {
-            bindEvent(((ViewHolder) holder), (PushEvent) event);
-            return;
         }
-        if (event instanceof CommentEvent) {
-            bindEvent(((ViewHolder) holder), (CommentEvent) event);
-            return;
-        }
-        throw new NotImplementedError();
 
     }
 
@@ -166,7 +191,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
 
-    private void bindEvent(final ViewHolder holder, PushEvent pushEvent) {
+    private void bindEvent(final MainViewHolder holder, PushEvent pushEvent) {
         holder.header.setText(pushEvent.getRepoName());
         holder.description.setText("Pushed " + pushEvent.getCommitNumber() + " commit(s)");
         Drawable branchIcon = context.getDrawable(R.drawable.icon_branch);
@@ -187,7 +212,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     }
 
-    private void bindEvent(ViewHolder holder, CommentEvent commentEvent) {
+    private void bindEvent(MainViewHolder holder, CommentEvent commentEvent) {
         holder.header.setText(commentEvent.getRepoName());
         holder.description.setText(commentEvent.getComment());
         holder.subDescription.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
@@ -215,9 +240,6 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         CharSequence temp = DateUtils.getRelativeTimeSpanString(milliseconds,System.currentTimeMillis(), DAY_IN_MILLIS, FORMAT_ABBREV_RELATIVE);
 
         holder.time.setText(temp);
-
-
-
 
     }
 
