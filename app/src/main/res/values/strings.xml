@@ -13,4 +13,5 @@
     <string name="commit_comment">commit comment</string>
     <string name="issue_comment">issue comment</string>
     <string name="pull_request_comment">pull request comment</string>
+    <string name="today_activity_warning">Сегодня активности нет.</string>
 </resources>

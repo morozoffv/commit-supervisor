@@ -48,6 +48,8 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private boolean isTodayEventExists = false;
 
+    private final static Event EVENT_STUB = new Event(EventTypes.EventStub);
+
     public static class MainViewHolder extends RecyclerView.ViewHolder {
 
         private CardView cardView;
@@ -80,13 +82,16 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public EventsAdapter(List<Event> dataSet, Context context) {
-        eventsList = dataSet;
+        eventsList = new ArrayList<>(dataSet);
         List<Event> todayEvents = getTodayCheckedEvents(eventsList);
-        if (!todayEvents.isEmpty()) {
+        if (todayEvents.isEmpty()) {
+
+            eventsList.add(0, EVENT_STUB);
+        }
+        else {
             eventsList = todayEvents;
         }
         this.context = context;
-
     }
 
     private List<Event> getTodayCheckedEvents(List<Event> events) {     //TODO: right now i run through whole list, make a smart check
@@ -106,22 +111,24 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 //add date stubs
             }
 
-            if (dayWithoutTimeDate.after(createdDate)) {
+            if (dayWithoutTimeDate.before(createdDate)) {
                 todayEvents.add(event);
             }
             else {
+                if (!todayEvents.isEmpty()) {
+                    //todayEvents.add(0, null); // add empty element for warning placement
+                    isTodayEventExists = true;
+                }
                 return todayEvents;
             }
         }
-        if (!todayEvents.isEmpty()) {
-            isTodayEventExists = true;
-        }
+
         return todayEvents;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (isTodayEventExists) {
+        if (!isTodayEventExists) {
             if (position == 0) {
                 return 0;
             }
@@ -155,7 +162,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         switch(holder.getItemViewType()) {
 
             case 0:
-                ((SecondaryViewHolder) holder).text.setText("Hey! I don't know what to write here, i will think about it later. Thank you.");
+                ((SecondaryViewHolder) holder).text.setText(R.string.today_activity_warning);
 
 
                 break;

@@ -5,5 +5,5 @@ package com.example.vlad.commitsupervisor.parsers;
  */
 
 public enum EventTypes {
-    PushEvent, CommitCommentEvent, IssueCommentEvent, PullRequestReviewCommentEvent
+    PushEvent, CommitCommentEvent, IssueCommentEvent, PullRequestReviewCommentEvent, EventStub
 }

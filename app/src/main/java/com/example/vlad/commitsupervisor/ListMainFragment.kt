@@ -65,11 +65,6 @@ class ListMainFragment : Fragment() {
         eventsRecyclerView.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this.context) //?
         eventsRecyclerView.layoutManager = layoutManager
-        eventsAdapter = EventsAdapter(events, activity) //TODO: warning, pass activity as context is bad practice
-        eventsAdapter.notifyDataSetChanged()
-        eventsRecyclerView.adapter = eventsAdapter
-
-
 
 
 //        eventsAdapter = EventsAdapter(interaction.searchResult!!.events)
